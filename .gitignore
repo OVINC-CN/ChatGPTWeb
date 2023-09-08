@@ -1,0 +1,14 @@
+# IDE
+.idea
+.env
+.certs
+
+# build
+dist
+node_modules
+
+# eslint
+eslint-results.sarif
+
+# log
+logs
