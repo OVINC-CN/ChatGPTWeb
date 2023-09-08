@@ -8,6 +8,9 @@ dependencies:
   '@kangc/v-md-editor':
     specifier: ^2.3.17
     version: 2.3.17(@vue/compiler-sfc@3.3.4)(vue@3.3.4)
+  aegis-web-sdk:
+    specifier: ^1.37.9
+    version: mirrors.tencent.com/aegis-web-sdk@1.37.9
   axios:
     specifier: ^1.5.0
     version: mirrors.tencent.com/axios@1.5.0
@@ -1109,6 +1112,14 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true
+
+  mirrors.tencent.com/aegis-web-sdk@1.37.9:
+    resolution: {integrity: sha512-YUVrFCASxi9/DQajpLallR5WP/V2I2uFU0FnOdVOfFinq5yl9dWf1PVtPEE7yTKNGIlGm6vFODYgq3bXPLu3TQ==, registry: http://r.tnpm.oa.com/, tarball: https://mirrors.tencent.com/npm/aegis-web-sdk/-/aegis-web-sdk-1.37.9.tgz}
+    name: aegis-web-sdk
+    version: 1.37.9
+    dependencies:
+      web-vitals: mirrors.tencent.com/web-vitals@1.1.2
+    dev: false
 
   mirrors.tencent.com/ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==, registry: http://r.tnpm.oa.com/, tarball: https://mirrors.tencent.com/npm/ajv/-/ajv-6.12.6.tgz}
@@ -5748,6 +5759,12 @@ packages:
     dependencies:
       '@vue/devtools-api': mirrors.tencent.com/@vue/devtools-api@6.5.0
       vue: mirrors.tencent.com/vue@3.3.4
+    dev: false
+
+  mirrors.tencent.com/web-vitals@1.1.2:
+    resolution: {integrity: sha512-PFMKIY+bRSXlMxVAQ+m2aw9c/ioUYfDgrYot0YUa+/xa0sakubWhSDyxAKwzymvXVdF4CZI71g06W+mqhzu6ig==, registry: http://r.tnpm.oa.com/, tarball: https://mirrors.tencent.com/npm/web-vitals/-/web-vitals-1.1.2.tgz}
+    name: web-vitals
+    version: 1.1.2
     dev: false
 
   mirrors.tencent.com/webpack-chain@4.12.1:
