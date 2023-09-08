@@ -7,7 +7,6 @@ const mEnUS = {
   PermissionDenied: 'Permission Denied',
   Chat: 'Chat',
   SendMessage: 'Send Message',
-  PleaseInput: 'Hi，please help me...',
   ClearMessage: 'Clear Messages',
   NoModelPermission: 'Unauthorized Model',
   CurrentModel: 'Current Model',

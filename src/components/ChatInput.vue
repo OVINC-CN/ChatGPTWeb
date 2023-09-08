@@ -27,6 +27,7 @@ const promptForm = ref({
 
 const store = useStore();
 const model = computed(() => store.state.currentModel);
+const modelName = ref('');
 const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
 watch(() => allModels.value, () => {
@@ -34,12 +35,37 @@ watch(() => allModels.value, () => {
     return;
   }
   const value = localStorage.getItem(localModelKey.value);
-  if (value && allModels.value.indexOf(value) !== -1) {
-    promptForm.value.model = value;
-  } else {
-    store.commit('setCurrentModel', allModels.value[0].id);
+  let matched = false;
+  allModels.value.forEach((item) => {
+    if (item.id === value) {
+      store.commit('setCurrentModel', value);
+      modelName.value = item.name;
+      matched = true;
+    }
+  });
+  if (matched) {
+    return;
   }
+  store.commit('setCurrentModel', allModels.value[0].id);
+  modelName.value = allModels.value[0].name;
 }, { deep: true, immediate: true });
+watch(() => model.value, () => {
+  if (!allModels.value.length) {
+    return;
+  }
+  let matched = false;
+  allModels.value.forEach((item) => {
+    if (item.id === model.value) {
+      modelName.value = item.name;
+      matched = true;
+    }
+  });
+  if (matched) {
+    return;
+  }
+  modelName.value = model.value;
+});
+
 
 const doChat = () => {
   // set loading
@@ -106,7 +132,7 @@ const onKeydown = (event) => {
       >
         <a-textarea
           v-model="promptForm.content"
-          :placeholder="$t('PleaseInput') + (model ? ('\n' + $t('CurrentModel') + ': ' + model) : ('\n' + $t('NoModelChoosed')))"
+          :placeholder="model ? ($t('CurrentModel') + ': ' + modelName) : $t('NoModelChoosed')"
           :auto-size="{minRows: 6, maxRows: 6}"
           :disabled="chatLoading"
           @keydown="onKeydown"
