@@ -20,7 +20,10 @@
                 disabled
                 id="app-menu-logo"
               >
-                <div>
+                <div
+                  @click="goTo('Chat')"
+                  style="cursor: pointer"
+                >
                   ChatGPT
                 </div>
               </a-menu-item>
@@ -42,6 +45,18 @@
                 style="font-weight: bold; margin-right: 10px; cursor: pointer"
                 @click="toggleFullScreen"
               />
+              <a-dropdown @select="setModel">
+                <icon-settings style="font-weight: bold; margin-right: 10px; cursor: pointer" />
+                <template #content>
+                  <a-doption
+                    v-for="item in models"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </a-doption>
+                </template>
+              </a-dropdown>
               <a-dropdown @select="changeLangAndReload">
                 <icon-public id="app-header-menu-lang" />
                 <template #content>
@@ -117,9 +132,20 @@ const currentYear = ref(new Date().getFullYear());
 // store
 const store = useStore();
 const mainLoading = computed(() => store.state.mainLoading);
-store.dispatch('getUserInfo');
-onMounted(() => store.dispatch('setMainLoading', false));
+onMounted(() => {
+  store.dispatch('getUserInfo');
+  store.dispatch('getModels');
+  store.dispatch('setMainLoading', false);
+});
 const user = computed(() => store.state.user);
+
+// models
+const models = computed(() => store.state.models);
+const localModelKey = ref('local-model');
+const setModel = (model) => {
+  localStorage.setItem(localModelKey.value, model);
+  store.commit('setCurrentModel', model);
+};
 </script>
 
 <style>

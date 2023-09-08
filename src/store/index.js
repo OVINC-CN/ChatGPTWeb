@@ -1,5 +1,7 @@
 import { createStore } from 'vuex';
 import { getUserInfoAPI, listUserPropertyAPI } from '../api/user';
+import { listModelsAPI } from '../api/model';
+import router from '../router';
 
 const store = createStore({
   state() {
@@ -18,6 +20,8 @@ const store = createStore({
         mail_address: null,
       },
       userPropertiesRaw: [],
+      models: [],
+      currentModel: '',
     };
   },
   mutations: {
@@ -36,6 +40,15 @@ const store = createStore({
     setUserPropertyRaw(state, payload) {
       state.userPropertiesRaw = payload;
     },
+    setModels(state, payload) {
+      state.models = payload;
+      if (!payload.length) {
+        router.push({ name: 'PermissionDenied' });
+      }
+    },
+    setCurrentModel(state, payload) {
+      state.currentModel = payload;
+    },
   },
   actions: {
     setMainLoading({ commit }, payload) {
@@ -53,10 +66,9 @@ const store = createStore({
         commit('setIsLogin', true);
       });
     },
-    getUserProperty({ commit }) {
-      listUserPropertyAPI().then((res) => {
-        commit('setUserPropertyRaw', res.data);
-        commit('setUserProperty', res.data);
+    getModels({ commit }) {
+      listModelsAPI().then((res) => {
+        commit('setModels', res.data);
       });
     },
   },

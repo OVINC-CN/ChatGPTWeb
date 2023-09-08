@@ -1,8 +1,10 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { createChatAPI } from '../api/chat';
 import { Message } from '@arco-design/web-vue';
 import { Role } from '../constants';
+import { useStore } from 'vuex';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   localMessages: {
@@ -17,27 +19,37 @@ const props = defineProps({
 
 const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages']);
 
+const i18n = useI18n();
+
 const promptForm = ref({
-  model: 'gpt-3.5-turbo',
   content: '',
 });
 
+const store = useStore();
+const model = computed(() => store.state.currentModel);
+const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
-onMounted(() => {
-  const value = localStorage.getItem(localModelKey.value);
-  if (value) {
-    promptForm.value.model = value;
+watch(() => allModels.value, () => {
+  if (!allModels.value.length) {
+    return;
   }
-});
+  const value = localStorage.getItem(localModelKey.value);
+  if (value && allModels.value.indexOf(value) !== -1) {
+    promptForm.value.model = value;
+  } else {
+    store.commit('setCurrentModel', allModels.value[0].id);
+  }
+}, { deep: true, immediate: true });
 
 const doChat = () => {
   // set loading
   emits('setChatLoading', true);
+  // push message
   emits('addMessage', { role: 'user', content: promptForm.value.content });
   // call api
   createChatAPI({
     messages: [...props.localMessages, { role: 'user', content: promptForm.value.content }],
-    model: promptForm.value.model,
+    model: model.value,
   })
     .then((res) => {
       // check success
@@ -94,7 +106,7 @@ const onKeydown = (event) => {
       >
         <a-textarea
           v-model="promptForm.content"
-          :placeholder="$t('PleaseInput')"
+          :placeholder="$t('PleaseInput') + (model ? ('\n' + $t('CurrentModel') + ': ' + model) : ('\n' + $t('NoModelChoosed')))"
           :auto-size="{minRows: 6, maxRows: 6}"
           :disabled="chatLoading"
           @keydown="onKeydown"
@@ -116,7 +128,7 @@ const onKeydown = (event) => {
           type="primary"
           html-type="submit"
           :loading="chatLoading"
-          :disabled="promptForm.content.length <= 0"
+          :disabled="promptForm.content.length <= 0 || !model"
         >
           {{ $t('SendMessage') }}
         </a-button>
