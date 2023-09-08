@@ -44,6 +44,7 @@
     },
     "dependencies": {
         "@kangc/v-md-editor": "^2.3.17",
+        "aegis-web-sdk": "^1.37.9",
         "axios": "^1.5.0",
         "highlight.js": "^11.8.0",
         "moment": "^2.29.4",

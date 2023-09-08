@@ -94,6 +94,8 @@ import { useStore } from 'vuex';
 import { locale, langOption, changeLangAndReload } from './locale';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import Aegis from 'aegis-web-sdk';
+import { getRUMConfigAPI } from './api/trace';
 
 // display
 const fullScreen = ref(true);
@@ -135,7 +137,6 @@ const mainLoading = computed(() => store.state.mainLoading);
 onMounted(() => {
   store.dispatch('getUserInfo');
   store.dispatch('getModels');
-  store.dispatch('setMainLoading', false);
 });
 const user = computed(() => store.state.user);
 
@@ -146,6 +147,20 @@ const setModel = (model) => {
   localStorage.setItem(localModelKey.value, model);
   store.commit('setCurrentModel', model);
 };
+
+// aegis
+const initRUM = () => {
+  getRUMConfigAPI()
+    .then((res) => {
+      if (res.data.id) {
+        new Aegis(res.data);
+      }
+    })
+    .finally(() => {
+      store.dispatch('setMainLoading', false);
+    });
+};
+onMounted(() => initRUM());
 </script>
 
 <style>
