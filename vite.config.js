@@ -2,16 +2,14 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
-  plugins: [
-    vue(),
-  ],
+  plugins: [vue()],
   define: {
     'process.env': {
       BACKEND_URL: process.env.BACKEND_URL,
       SITE_URL: process.env.SITE_URL,
       OVINC_URL: process.env.OVINC_URL,
       OVINC_WEB_URL: process.env.OVINC_WEB_URL,
-    }
+    },
   },
   base: '/',
   publicDir: 'public',
@@ -20,16 +18,14 @@ export default defineConfig({
     port: 8080,
     https: {
       key: './.certs/key',
-      cert: './.certs/pem'
+      cert: './.certs/pem',
     },
   },
   css: {
-    preprocessorOptions:
-    {
-      scss:
-        {
-          charset: false,
-        },
+    preprocessorOptions: {
+      scss: {
+        charset: false,
+      },
     },
   },
   build: {

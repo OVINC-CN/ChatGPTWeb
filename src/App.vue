@@ -5,7 +5,10 @@
       :loading="mainLoading"
       :tip="$t('loading')"
     >
-      <a-layout id="app-layout">
+      <a-layout
+        id="app-layout"
+        :style="{maxWidth: fullScreen ? '100%' : '1100px'}"
+      >
         <a-layout-header id="app-header">
           <div>
             <a-menu
@@ -17,7 +20,10 @@
                 disabled
                 id="app-menu-logo"
               >
-                <div>
+                <div
+                  @click="goTo('Chat')"
+                  style="cursor: pointer"
+                >
                   ChatGPT
                 </div>
               </a-menu-item>
@@ -29,6 +35,28 @@
               </a-menu-item>
             </a-menu>
             <a-space id="app-header-right">
+              <icon-fullscreen-exit
+                v-if="fullScreen"
+                style="font-weight: bold; margin-right: 10px; cursor: pointer"
+                @click="toggleFullScreen"
+              />
+              <icon-fullscreen
+                v-else
+                style="font-weight: bold; margin-right: 10px; cursor: pointer"
+                @click="toggleFullScreen"
+              />
+              <a-dropdown @select="setModel">
+                <icon-settings style="font-weight: bold; margin-right: 10px; cursor: pointer" />
+                <template #content>
+                  <a-doption
+                    v-for="item in models"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </a-doption>
+                </template>
+              </a-dropdown>
               <a-dropdown @select="changeLangAndReload">
                 <icon-public id="app-header-menu-lang" />
                 <template #content>
@@ -61,52 +89,72 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useStore } from 'vuex'
-import { locale, langOption, changeLangAndReload } from './locale'
-import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
-import UserAvatar from './components/UserAvatar.vue'
+import { computed, onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import { locale, langOption, changeLangAndReload } from './locale';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
+
+// display
+const fullScreen = ref(true);
+const fullScreenKey = ref('full-screen');
+const toggleFullScreen = () => {
+  fullScreen.value = !fullScreen.value;
+  localStorage.setItem(fullScreenKey.value, fullScreen.value ? 'true' : 'false');
+};
+onMounted(() => {
+  fullScreen.value = localStorage.getItem(fullScreenKey.value) === 'true';
+});
 
 // locale
-const i18n = useI18n()
+const i18n = useI18n();
 
 // title
-const title = ref(i18n.t('ChatGPTOVINC'))
-document.title = title.value
+const title = ref(i18n.t('ChatGPTOVINC'));
+document.title = title.value;
 
 // menu
-const menu = ref([
-  {
-    key: 'Home',
-    name: i18n.t('Home'),
-    path_match: '/'
-  }
-])
-const route = useRoute()
-const router = useRouter()
-const currentMenuItem = ref(menu.value[0].key)
+const menu = ref([]);
+const route = useRoute();
+const router = useRouter();
+const currentMenuItem = ref('');
 const goTo = (key) => {
-  router.push({name: key})
-}
+  router.push({ name: key });
+};
 menu.value.forEach((item, index) => {
-  if (index === 0) return
-  if (window.location.pathname.startsWith(item.path_match)) currentMenuItem.value = item.key
-})
+  if (index === 0) return;
+  if (window.location.pathname.startsWith(item.path_match)) currentMenuItem.value = item.key;
+});
 
 // footer
-const currentYear = ref(new Date().getFullYear())
+const currentYear = ref(new Date().getFullYear());
 
 // store
-const store = useStore()
-const mainLoading = computed(() => store.state.mainLoading)
-store.dispatch('getUserInfo')
-onMounted(() => store.dispatch('setMainLoading', false))
-const user = computed(() => store.state.user)
+const store = useStore();
+const mainLoading = computed(() => store.state.mainLoading);
+onMounted(() => {
+  store.dispatch('getUserInfo');
+  store.dispatch('getModels');
+  store.dispatch('setMainLoading', false);
+});
+const user = computed(() => store.state.user);
+
+// models
+const models = computed(() => store.state.models);
+const localModelKey = ref('local-model');
+const setModel = (model) => {
+  localStorage.setItem(localModelKey.value, model);
+  store.commit('setCurrentModel', model);
+};
 </script>
 
 <style>
 @import "App.css";
+
+#app {
+  display: flex;
+  justify-content: center;
+}
 
 #app-layout {
   height: 100vh;

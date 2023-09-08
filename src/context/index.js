@@ -3,6 +3,6 @@ const globalContext = {
   backendUrl: process.env.BACKEND_URL,
   ovincUrl: process.env.OVINC_URL,
   ovincWebUrl: process.env.OVINC_WEB_URL,
-}
+};
 
 export default globalContext;

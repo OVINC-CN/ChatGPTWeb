@@ -3,7 +3,14 @@ const mEnUS = {
   OVINCCN: 'OVINC CN',
   PageNotExist: 'Page Not Exist',
   loading: 'Loading...',
-  ChatGPTOVINC: 'ChatGPT | OVINC'
-}
+  ChatGPTOVINC: 'ChatGPT | OVINC',
+  PermissionDenied: 'Permission Denied',
+  Chat: 'Chat',
+  SendMessage: 'Send Message',
+  ClearMessage: 'Clear Messages',
+  NoModelPermission: 'Unauthorized Model',
+  CurrentModel: 'Current Model',
+  NoModelChoosed: 'No Model Choosed',
+};
 
-export default mEnUS
+export default mEnUS;
