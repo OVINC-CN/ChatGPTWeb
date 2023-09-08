@@ -1,0 +1,32 @@
+{
+    "name": "dev-template",
+    "version": "1.0.0",
+    "description": "Dev Template",
+    "main": "src/main.js",
+    "author": "OVINC-CN <contact@ovinc.cn>",
+    "license": "MIT",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "serve": "vite preview"
+    },
+    "dependencies": {
+        "axios": "^0.27.2",
+        "moment": "^2.29.4",
+        "vue": "^3.3.4",
+        "vue-axios": "^3.5.2",
+        "vue-i18n": "^9.2.2",
+        "vue-router": "^4.2.4",
+        "vuex": "^4.1.0"
+    },
+    "devDependencies": {
+        "@arco-design/web-vue": "^2.50.2",
+        "@microsoft/eslint-formatter-sarif": "2.1.7",
+        "@vitejs/plugin-vue": "^2.3.4",
+        "eslint": "8.22.0",
+        "eslint-plugin-vue": "^8.7.1",
+        "standard": "^16.0.4",
+        "vite": "^2.9.16",
+        "vue-eslint-parser": "^8.3.0"
+    }
+}

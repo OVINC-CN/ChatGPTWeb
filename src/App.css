@@ -1,0 +1,38 @@
+body {
+    --shadow-special: 0 0 1px rgba(0, 0, 0, 0.3);
+    --shadow1-center: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    --shadow2-center: 0 0 10px rgba(0, 0, 0, 0.1);
+    --shadow3-center:0 0 20px rgba(0, 0, 0, 0.1);
+}
+body[arco-theme='dark'] {
+    --shadow-special: 0 0 1px rgba(0, 0, 0, 0.3);
+    --shadow1-center: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    --shadow2-center: 0 0 10px rgba(0, 0, 0, 0.1);
+    --shadow3-center:0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+html, body, #app {
+    width: 100vw;
+    height: 100vh;
+}
+
+.arco-icon {
+    font-size: 18px;
+}
+
+.arco-empty {
+    display: flex;
+    flex-direction: column;
+}
+
+.arco-empty .arco-empty-image {
+    line-height: 0;
+}
+
+.arco-avatar-text {
+    line-height: unset!important;
+}
+
+.arco-btn-icon {
+    line-height: 0
+}
