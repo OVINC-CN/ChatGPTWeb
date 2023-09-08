@@ -10,23 +10,59 @@
         "build": "vite build",
         "serve": "vite preview"
     },
+    "eslintConfig": {
+        "root": true,
+        "parser": "vue-eslint-parser",
+        "parserOptions": {
+            "ecmaVersion": 2022,
+            "sourceType": "module"
+        },
+        "env": {
+            "browser": true,
+            "es6": true
+        },
+        "globals": {
+            "defineProps": "readonly",
+            "defineEmits": "readonly"
+        },
+        "extends": [
+            "plugin:vue/vue3-strongly-recommended",
+            "@tencent/eslint-config-tencent"
+        ],
+        "rules": {
+            "vue/no-side-effects-in-computed-properties": "off",
+            "vue/multi-word-component-names": "off",
+            "max-len": "off",
+            "no-param-reassign": "off",
+            "no-unused-vars": "off"
+        },
+        "ignorePatterns": [
+            "dist/",
+            "public/",
+            "node_modules/"
+        ]
+    },
     "dependencies": {
-        "axios": "^0.27.2",
+        "@kangc/v-md-editor": "^2.3.17",
+        "axios": "^1.5.0",
+        "highlight.js": "^11.8.0",
         "moment": "^2.29.4",
+        "prismjs": "^1.29.0",
         "vue": "^3.3.4",
         "vue-axios": "^3.5.2",
-        "vue-i18n": "^9.2.2",
+        "vue-i18n": "^9.3.0",
         "vue-router": "^4.2.4",
         "vuex": "^4.1.0"
     },
     "devDependencies": {
-        "@arco-design/web-vue": "^2.50.2",
-        "@microsoft/eslint-formatter-sarif": "2.1.7",
-        "@vitejs/plugin-vue": "^2.3.4",
-        "eslint": "8.22.0",
-        "eslint-plugin-vue": "^8.7.1",
-        "standard": "^16.0.4",
-        "vite": "^2.9.16",
-        "vue-eslint-parser": "^8.3.0"
+        "@arco-design/web-vue": "^2.51.0",
+        "@microsoft/eslint-formatter-sarif": "3.0.0",
+        "@tencent/eslint-config-tencent": "^1.0.4",
+        "@vitejs/plugin-vue": "^4.3.4",
+        "eslint": "8.48.0",
+        "eslint-plugin-vue": "^9.17.0",
+        "standard": "^17.1.0",
+        "vite": "^4.4.9",
+        "vue-eslint-parser": "^9.3.1"
     }
 }

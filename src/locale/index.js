@@ -1,9 +1,9 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n';
 import enUS from '@arco-design/web-vue/es/locale/lang/en-us';
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn';
-import mZhCN from './zh-cn'
-import mEnUS from './en-us'
-import { changeLangAPI } from '../api/home'
+import mZhCN from './zh-cn';
+import mEnUS from './en-us';
+import { changeLangAPI } from '../api/home';
 
 // language option
 export const langOption = [
@@ -11,43 +11,44 @@ export const langOption = [
     name: '简体中文',
     value: 'zhCN',
     locale: zhCN,
-    backend: 'zh-hans'
+    backend: 'zh-hans',
   },
   {
     name: 'English',
     value: 'enUS',
     locale: enUS,
-    backend: 'en'
-  }
-]
+    backend: 'en',
+  },
+];
 
 // local storage key
-const userLangKey = 'user-language'
+const userLangKey = 'user-language';
 
 // default language
-let mLocal = 'zhCN'
-export let locale = zhCN
+let mLocal = 'zhCN';
+// eslint-disable-next-line import/no-mutable-exports
+export let locale = zhCN;
 
 // change language
 export const changeLang = async (value) => {
-  let curLang = null
-  langOption.forEach(item => {
+  let curLang = null;
+  langOption.forEach((item) => {
     if (item.value === value) {
-      curLang = item
+      curLang = item;
     }
-  })
-  locale = curLang.locale
-  mLocal = curLang.value
+  });
+  locale = curLang.locale;
+  mLocal = curLang.value;
   await changeLangAPI(curLang.backend).then(() => {
-    localStorage.setItem(userLangKey, value)
-  })
-}
+    localStorage.setItem(userLangKey, value);
+  });
+};
 export const changeLangAndReload = (value) => {
-  changeLang(value).finally(() => window.location.reload())
-}
+  changeLang(value).finally(() => window.location.reload());
+};
 
 // load language
-const userLang = localStorage.getItem(userLangKey)
+const userLang = localStorage.getItem(userLangKey);
 if (userLang) changeLang(userLang);
 
 // i18n
@@ -57,8 +58,8 @@ const i18n = createI18n({
   legacy: false,
   messages: {
     zhCN: mZhCN,
-    enUS: mEnUS
-  }
-})
+    enUS: mEnUS,
+  },
+});
 
-export default i18n
+export default i18n;

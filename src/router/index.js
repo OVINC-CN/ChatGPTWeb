@@ -3,11 +3,15 @@ import * as vueRouter from 'vue-router';
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/Home.vue'),
+    name: 'Chat',
+    component: () => import('../views/Chat.vue'),
   },
   {
-
+    path: '/permission-denied',
+    name: 'PermissionDenied',
+    component: () => import('../views/Error403.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'Notfound',
     component: () => import('../views/Error404.vue'),

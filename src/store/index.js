@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { getUserInfoAPI, listUserPropertyAPI } from '../api/user'
+import { getUserInfoAPI, listUserPropertyAPI } from '../api/user';
 
 const store = createStore({
   state() {
@@ -10,7 +10,7 @@ const store = createStore({
         username: '',
         nick_name: '',
         last_login: '',
-        user_type: ''
+        user_type: '',
       },
       userProperties: {
         avatar: null,
@@ -28,13 +28,13 @@ const store = createStore({
       state.user = payload;
     },
     setIsLogin(state, payload) {
-      state.isLogin = payload
+      state.isLogin = payload;
     },
-    setUserProperty(state, payload){
-      payload.forEach(item => state.userProperties[item.property_key] = item.property_val)
+    setUserProperty(state, payload) {
+      payload.forEach(item => (state.userProperties[item.property_key] = item.property_val));
     },
-    setUserPropertyRaw(state, payload){
-      state.userPropertiesRaw = payload
+    setUserPropertyRaw(state, payload) {
+      state.userPropertiesRaw = payload;
     },
   },
   actions: {
@@ -47,22 +47,18 @@ const store = createStore({
         }, 600);
       }
     },
-    getUserInfo({ commit, dispatch }) {
-      getUserInfoAPI().then(
-        res => {
-          commit('setUser', res.data);
-          commit('setIsLogin', true);
-        }
-      );
+    getUserInfo({ commit }) {
+      getUserInfoAPI().then((res) => {
+        commit('setUser', res.data);
+        commit('setIsLogin', true);
+      });
     },
     getUserProperty({ commit }) {
-      listUserPropertyAPI().then(
-        res => {
-          commit('setUserPropertyRaw', res.data)
-          commit('setUserProperty', res.data)
-        }
-      )
-    }
+      listUserPropertyAPI().then((res) => {
+        commit('setUserPropertyRaw', res.data);
+        commit('setUserProperty', res.data);
+      });
+    },
   },
 });
 
