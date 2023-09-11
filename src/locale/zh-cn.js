@@ -11,6 +11,8 @@ const mZhCN = {
   NoModelPermission: '未授权模型',
   CurrentModel: '当前模型',
   NoModelChoosed: '未选择模型',
+  VerifyingUserInfo: '登录中',
+  Logout: '登出',
 };
 
 export default mZhCN;
