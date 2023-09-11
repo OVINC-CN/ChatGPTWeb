@@ -7,7 +7,11 @@ const routes = [
     component: () => import('../views/Chat.vue'),
   },
   {
-    path: '/permission-denied',
+    path: '/login/',
+    name: 'Login',
+    component: () => import('../views/Login.vue'),
+  },
+  {  path: '/permission-denied',
     name: 'PermissionDenied',
     component: () => import('../views/Error403.vue'),
   },

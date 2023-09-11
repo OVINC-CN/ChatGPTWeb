@@ -69,7 +69,23 @@
                   </a-doption>
                 </template>
               </a-dropdown>
-              {{ user.nick_name }}
+              <a-dropdown @select="handlerUserDropDown">
+                <a-button
+                  type="text"
+                  style="padding: 0; color: unset"
+                >
+                  {{ user.nick_name }}
+                </a-button>
+                <template #content>
+                  <a-doption
+                    v-for="item in userDropDown"
+                    :key="item.value"
+                    :value="item.value"
+                  >
+                    {{ item.name }}
+                  </a-doption>
+                </template>
+              </a-dropdown>
             </a-space>
           </div>
         </a-layout-header>
@@ -95,6 +111,7 @@ import { locale, langOption, changeLangAndReload } from './locale';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Aegis from 'aegis-web-sdk';
+import { signOutAPI } from './api/user';
 import { getRUMConfigAPI } from './api/trace';
 
 // display
@@ -138,7 +155,20 @@ onMounted(() => {
   store.dispatch('getUserInfo');
   store.dispatch('getModels');
 });
+
+// user
+const userDropDown = ref([
+  {
+    name: i18n.t('Logout'),
+    value: 'logout',
+  },
+]);
 const user = computed(() => store.state.user);
+const handlerUserDropDown = (key) => {
+  if (key === 'logout') {
+    signOutAPI().finally(() => window.location.reload());
+  }
+};
 
 // models
 const models = computed(() => store.state.models);

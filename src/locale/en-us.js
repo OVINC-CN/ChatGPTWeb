@@ -11,6 +11,8 @@ const mEnUS = {
   NoModelPermission: 'Unauthorized Model',
   CurrentModel: 'Current Model',
   NoModelChoosed: 'No Model Choosed',
+  VerifyingUserInfo: 'Verifying...',
+  Logout: 'Logout',
 };
 
 export default mEnUS;

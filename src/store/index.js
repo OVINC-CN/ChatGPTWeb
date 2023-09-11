@@ -1,12 +1,12 @@
 import { createStore } from 'vuex';
-import { getUserInfoAPI, listUserPropertyAPI } from '../api/user';
+import { getUserInfoAPI } from '../api/user';
 import { listModelsAPI } from '../api/model';
 import router from '../router';
 
 const store = createStore({
   state() {
     return {
-      mainLoading: true,
+      mainLoading: false,
       isLogin: false,
       user: {
         username: '',
