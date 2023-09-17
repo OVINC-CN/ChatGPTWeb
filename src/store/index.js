@@ -1,6 +1,6 @@
-import { createStore } from 'vuex';
-import { getUserInfoAPI } from '../api/user';
-import { listModelsAPI } from '../api/model';
+import {createStore} from 'vuex';
+import {getUserInfoAPI} from '../api/user';
+import {listModelsAPI} from '../api/model';
 import router from '../router';
 
 const store = createStore({
@@ -35,7 +35,7 @@ const store = createStore({
       state.isLogin = payload;
     },
     setUserProperty(state, payload) {
-      payload.forEach(item => (state.userProperties[item.property_key] = item.property_val));
+      payload.forEach((item) => (state.userProperties[item.property_key] = item.property_val));
     },
     setUserPropertyRaw(state, payload) {
       state.userPropertiesRaw = payload;
@@ -43,7 +43,7 @@ const store = createStore({
     setModels(state, payload) {
       state.models = payload;
       if (!payload.length) {
-        router.push({ name: 'PermissionDenied' });
+        router.push({name: 'PermissionDenied'});
       }
     },
     setCurrentModel(state, payload) {
@@ -51,7 +51,7 @@ const store = createStore({
     },
   },
   actions: {
-    setMainLoading({ commit }, payload) {
+    setMainLoading({commit}, payload) {
       if (payload) {
         commit('setMainLoading', true);
       } else {
@@ -60,13 +60,13 @@ const store = createStore({
         }, 600);
       }
     },
-    getUserInfo({ commit }) {
+    getUserInfo({commit}) {
       getUserInfoAPI().then((res) => {
         commit('setUser', res.data);
         commit('setIsLogin', true);
       });
     },
-    getModels({ commit }) {
+    getModels({commit}) {
       listModelsAPI().then((res) => {
         commit('setModels', res.data);
       });

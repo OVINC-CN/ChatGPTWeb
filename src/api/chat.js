@@ -1,6 +1,6 @@
 import globalContext from '../context';
 
-export const createChatAPI = data => new Promise((resolve, reject) => {
+export const createChatAPI = (data) => new Promise((resolve, reject) => {
   fetch(`${globalContext.backendUrl}/chat/`, {
     method: 'POST',
     headers: {
@@ -9,7 +9,7 @@ export const createChatAPI = data => new Promise((resolve, reject) => {
     body: JSON.stringify(data),
     credentials: 'include',
   }).then(
-    res => resolve(res),
-    err => reject(err),
+      (res) => resolve(res),
+      (err) => reject(err),
   );
 });

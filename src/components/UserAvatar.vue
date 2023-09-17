@@ -19,22 +19,22 @@
 </template>
 
 <script setup>
-import { useStore } from 'vuex'
-import { computed } from 'vue'
+import {useStore} from 'vuex';
+import {computed} from 'vue';
 
 // props
 const props = defineProps({
   size: {
     type: Number,
-    default: null
-  }
-})
+    default: null,
+  },
+});
 
-//store
-const store = useStore()
-const isLogin = computed(() => store.state.isLogin)
-const user = computed(() => store.state.user)
-const userAvatar = computed(() => store.state.userProperties.avatar)
+// store
+const store = useStore();
+const isLogin = computed(() => store.state.isLogin);
+const user = computed(() => store.state.user);
+const userAvatar = computed(() => store.state.userProperties.avatar);
 </script>
 
 <style scoped>

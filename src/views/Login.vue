@@ -1,24 +1,24 @@
 <script setup>
-import { signInAPI } from '../api/user';
-import { onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import {signInAPI} from '../api/user';
+import {onMounted} from 'vue';
+import {Message} from '@arco-design/web-vue';
 
 const doLogin = () => {
   const url = new URL(window.location.href);
   const next = url.searchParams.get('next');
   const code = url.searchParams.get('code');
   console.log(next);
-  signInAPI({ code }).then(
-    () => {},
-    (err) => {
-      Message.error(err.response.data.message);
-    },
+  signInAPI({code}).then(
+      () => {},
+      (err) => {
+        Message.error(err.response.data.message);
+      },
   )
-    .finally(() => {
-      setTimeout(() => {
-        window.location.href = next;
-      }, 2000);
-    });
+      .finally(() => {
+        setTimeout(() => {
+          window.location.href = next;
+        }, 2000);
+      });
 };
 
 onMounted(() => doLogin());
