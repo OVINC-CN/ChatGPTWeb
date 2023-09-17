@@ -25,12 +25,20 @@ onMounted(() => {
 
 const chatLoading = ref(false);
 const setChatLoading = (status) => handleLoading(chatLoading, status);
+
+// scroll
+const userBehavior = ref(false);
+const toggleUserBehavior = (status) => userBehavior.value = status;
 </script>
 
 <template>
   <div id="chat">
     <div id="chat-content">
-      <message-display :local-messages="localMessages" />
+      <message-display
+        :local-messages="localMessages"
+        :user-behavior="userBehavior"
+        @toggle-user-behavior="toggleUserBehavior"
+      />
       <a-divider />
       <chat-input
         :local-messages="localMessages"
@@ -39,6 +47,7 @@ const setChatLoading = (status) => handleLoading(chatLoading, status);
         @set-chat-loading="setChatLoading"
         @save-message="saveMessage"
         @clear-messages="clearMessages"
+        @toggle-user-behavior="toggleUserBehavior"
       />
     </div>
   </div>
