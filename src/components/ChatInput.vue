@@ -6,6 +6,7 @@ import {Role} from '../constants';
 import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
 
+// props
 const props = defineProps({
   localMessages: {
     type: Array,
@@ -17,15 +18,21 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages']);
+// emits
+const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior']);
 
+// i18n
 const i18n = useI18n();
 
+// user input
 const promptForm = ref({
   content: '',
 });
 
+// store
 const store = useStore();
+
+// model
 const model = computed(() => store.state.currentModel);
 const modelName = ref('');
 const allModels = computed(() => store.state.models);
@@ -66,7 +73,7 @@ watch(() => model.value, () => {
   modelName.value = model.value;
 });
 
-
+// chat
 const doChat = () => {
   // set loading
   emits('setChatLoading', true);
@@ -78,11 +85,13 @@ const doChat = () => {
     model: model.value,
   })
       .then((res) => {
-      // check success
+        // check success
         if (!res.ok) {
           Message.error(res.statusText);
           return;
         }
+        // auto scroll
+        emits('toggleUserBehavior', false);
         // init response content
         const lastResponseContent = ref({role: Role.Assistant, content: ''});
         emits('addMessage', lastResponseContent.value);
@@ -107,6 +116,7 @@ const doChat = () => {
       .finally(() => emits('setChatLoading', false));
 };
 
+//  auto submit
 const lastMeta = ref(false);
 const allowSubmitKeys = ref(['Shift', 'Alt', 'Control', 'Meta']);
 const onKeydown = (event) => {
@@ -119,10 +129,15 @@ const onKeydown = (event) => {
   }
   lastMeta.value = false;
 };
+
+const showEditBox = ref(true);
 </script>
 
 <template>
-  <div id="chat-input">
+  <div
+    id="chat-input"
+    :style="{height: showEditBox ? '214px' : '32px'}"
+  >
     <a-form
       :model="promptForm"
       @submit="doChat"
@@ -130,6 +145,7 @@ const onKeydown = (event) => {
       <a-form-item
         field="content"
         hide-label
+        v-show="showEditBox"
       >
         <a-textarea
           v-model="promptForm.content"
@@ -137,6 +153,7 @@ const onKeydown = (event) => {
           :auto-size="{minRows: 6, maxRows: 6}"
           :disabled="chatLoading"
           @keydown="onKeydown"
+          @focus="emits('toggleUserBehavior', false)"
         />
       </a-form-item>
       <a-form-item
@@ -144,21 +161,34 @@ const onKeydown = (event) => {
         style="margin-bottom: 0;"
         id="chat-input-submit-button"
       >
-        <a-button
-          :loading="chatLoading"
-          style="margin-right: 10px"
-          @click="emits('clearMessages')"
-        >
-          {{ $t('ClearMessage') }}
-        </a-button>
-        <a-button
-          type="primary"
-          html-type="submit"
-          :loading="chatLoading"
-          :disabled="promptForm.content.length <= 0 || !model"
-        >
-          {{ $t('SendMessage') }}
-        </a-button>
+        <a-space style="display: flex; width: 100%; justify-content: space-between;">
+          <a-space>
+            <a-button
+              shape="circle"
+              @click="showEditBox = !showEditBox"
+            >
+              <icon-layers />
+            </a-button>
+          </a-space>
+          <a-space>
+            <a-button
+              :loading="chatLoading"
+              @click="emits('clearMessages')"
+              v-show="showEditBox"
+            >
+              {{ $t('ClearMessage') }}
+            </a-button>
+            <a-button
+              type="primary"
+              html-type="submit"
+              :loading="chatLoading"
+              :disabled="promptForm.content.length <= 0 || !model"
+              v-show="showEditBox"
+            >
+              {{ $t('SendMessage') }}
+            </a-button>
+          </a-space>
+        </a-space>
       </a-form-item>
     </a-form>
   </div>
@@ -167,7 +197,6 @@ const onKeydown = (event) => {
 <style scoped>
 #chat-input {
   min-width: 100%;
-  height: 214px;
   padding: 0 20px;
   box-sizing: border-box;
 }
