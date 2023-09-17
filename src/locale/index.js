@@ -1,9 +1,9 @@
-import { createI18n } from 'vue-i18n';
+import {createI18n} from 'vue-i18n';
 import enUS from '@arco-design/web-vue/es/locale/lang/en-us';
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn';
 import mZhCN from './zh-cn';
 import mEnUS from './en-us';
-import { changeLangAPI } from '../api/home';
+import {changeLangAPI} from '../api/home';
 
 // language option
 export const langOption = [
@@ -26,7 +26,6 @@ const userLangKey = 'user-language';
 
 // default language
 let mLocal = 'zhCN';
-// eslint-disable-next-line import/no-mutable-exports
 export let locale = zhCN;
 
 // change language

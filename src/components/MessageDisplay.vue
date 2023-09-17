@@ -1,6 +1,6 @@
 <script setup>
 import MessageContent from './MessageContent.vue';
-import { ref, watch } from 'vue';
+import {ref, watch} from 'vue';
 
 const props = defineProps({
   localMessages: {
@@ -18,7 +18,7 @@ watch(() => props.localMessages, () => {
   if (el) {
     el.scrollTop = el.scrollHeight;
   }
-}, { deep: true, immediate: false });
+}, {deep: true, immediate: false});
 </script>
 
 <template>

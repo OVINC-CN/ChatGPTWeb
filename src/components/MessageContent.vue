@@ -1,7 +1,7 @@
 <script setup>
-import { Role } from '../constants';
-import { useStore } from 'vuex';
-import { computed } from 'vue';
+import {Role} from '../constants';
+import {useStore} from 'vuex';
+import {computed} from 'vue';
 
 const props = defineProps({
   message: {

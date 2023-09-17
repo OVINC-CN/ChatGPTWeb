@@ -11,7 +11,7 @@ const routes = [
     name: 'Login',
     component: () => import('../views/Login.vue'),
   },
-  {  path: '/permission-denied',
+  {path: '/permission-denied',
     name: 'PermissionDenied',
     component: () => import('../views/Error403.vue'),
   },

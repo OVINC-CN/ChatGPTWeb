@@ -27,7 +27,7 @@
         },
         "extends": [
             "plugin:vue/vue3-strongly-recommended",
-            "@tencent/eslint-config-tencent"
+            "eslint-config-google"
         ],
         "rules": {
             "vue/no-side-effects-in-computed-properties": "off",
@@ -58,9 +58,9 @@
     "devDependencies": {
         "@arco-design/web-vue": "^2.51.0",
         "@microsoft/eslint-formatter-sarif": "3.0.0",
-        "@tencent/eslint-config-tencent": "^1.0.4",
         "@vitejs/plugin-vue": "^4.3.4",
         "eslint": "8.48.0",
+        "eslint-config-google": "^0.14.0",
         "eslint-plugin-vue": "^9.17.0",
         "standard": "^17.1.0",
         "vite": "^4.4.9",

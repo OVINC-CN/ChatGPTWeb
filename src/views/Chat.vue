@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import ChatInput from '../components/ChatInput.vue';
-import { handleLoading } from '../utils/loading';
+import {handleLoading} from '../utils/loading';
 import MessageDisplay from '../components/MessageDisplay.vue';
 
 const localMessages = ref([]);
@@ -24,7 +24,7 @@ onMounted(() => {
 });
 
 const chatLoading = ref(false);
-const setChatLoading = status => handleLoading(chatLoading, status);
+const setChatLoading = (status) => handleLoading(chatLoading, status);
 </script>
 
 <template>

@@ -2,6 +2,7 @@
 .idea
 .env
 .certs
+yarn.lock
 
 # build
 dist

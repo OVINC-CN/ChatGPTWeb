@@ -105,14 +105,14 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex';
-import { locale, langOption, changeLangAndReload } from './locale';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+import {computed, onMounted, ref} from 'vue';
+import {useStore} from 'vuex';
+import {locale, langOption, changeLangAndReload} from './locale';
+import {useI18n} from 'vue-i18n';
+import {useRoute, useRouter} from 'vue-router';
 import Aegis from 'aegis-web-sdk';
-import { signOutAPI } from './api/user';
-import { getRUMConfigAPI } from './api/trace';
+import {signOutAPI} from './api/user';
+import {getRUMConfigAPI} from './api/trace';
 
 // display
 const fullScreen = ref(true);
@@ -138,7 +138,7 @@ const route = useRoute();
 const router = useRouter();
 const currentMenuItem = ref('');
 const goTo = (key) => {
-  router.push({ name: key });
+  router.push({name: key});
 };
 menu.value.forEach((item, index) => {
   if (index === 0) return;
@@ -181,14 +181,14 @@ const setModel = (model) => {
 // aegis
 const initRUM = () => {
   getRUMConfigAPI()
-    .then((res) => {
-      if (res.data.id) {
-        new Aegis(res.data);
-      }
-    })
-    .finally(() => {
-      store.dispatch('setMainLoading', false);
-    });
+      .then((res) => {
+        if (res.data.id) {
+          new Aegis(res.data);
+        }
+      })
+      .finally(() => {
+        store.dispatch('setMainLoading', false);
+      });
 };
 onMounted(() => initRUM());
 </script>

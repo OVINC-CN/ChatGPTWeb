@@ -1,10 +1,10 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { createChatAPI } from '../api/chat';
-import { Message } from '@arco-design/web-vue';
-import { Role } from '../constants';
-import { useStore } from 'vuex';
-import { useI18n } from 'vue-i18n';
+import {computed, ref, watch} from 'vue';
+import {createChatAPI} from '../api/chat';
+import {Message} from '@arco-design/web-vue';
+import {Role} from '../constants';
+import {useStore} from 'vuex';
+import {useI18n} from 'vue-i18n';
 
 const props = defineProps({
   localMessages: {
@@ -48,7 +48,7 @@ watch(() => allModels.value, () => {
   }
   store.commit('setCurrentModel', allModels.value[0].id);
   modelName.value = allModels.value[0].name;
-}, { deep: true, immediate: true });
+}, {deep: true, immediate: true});
 watch(() => model.value, () => {
   if (!allModels.value.length) {
     return;
@@ -71,39 +71,40 @@ const doChat = () => {
   // set loading
   emits('setChatLoading', true);
   // push message
-  emits('addMessage', { role: 'user', content: promptForm.value.content });
+  emits('addMessage', {role: 'user', content: promptForm.value.content});
   // call api
   createChatAPI({
-    messages: [...props.localMessages, { role: 'user', content: promptForm.value.content }],
+    messages: [...props.localMessages, {role: 'user', content: promptForm.value.content}],
     model: model.value,
   })
-    .then((res) => {
+      .then((res) => {
       // check success
-      if (!res.ok) {
-        Message.error(res.statusText);
-        return;
-      }
-      // init response content
-      const lastResponseContent = ref({ role: Role.Assistant, content: '' });
-      emits('addMessage', lastResponseContent.value);
-      // clear input
-      promptForm.value.content = '';
-      // decode chunk
-      const decoder = new TextDecoder('utf-8');
-      const reader = res.body.getReader();
-      function read() {
-        reader.read().then((chunk) => {
-          if (!chunk.done) {
-            const value = decoder.decode(chunk.value);
-            lastResponseContent.value.content += value;
-            read();
-          }
-          emits('saveMessage');
-        });
-      }
-      read();
-    })
-    .finally(() => emits('setChatLoading', false));
+        if (!res.ok) {
+          Message.error(res.statusText);
+          return;
+        }
+        // init response content
+        const lastResponseContent = ref({role: Role.Assistant, content: ''});
+        emits('addMessage', lastResponseContent.value);
+        // clear input
+        promptForm.value.content = '';
+        // decode chunk
+        const decoder = new TextDecoder('utf-8');
+        const reader = res.body.getReader();
+        // eslint-disable-next-line require-jsdoc
+        function read() {
+          reader.read().then((chunk) => {
+            if (!chunk.done) {
+              const value = decoder.decode(chunk.value);
+              lastResponseContent.value.content += value;
+              read();
+            }
+            emits('saveMessage');
+          });
+        }
+        read();
+      })
+      .finally(() => emits('setChatLoading', false));
 };
 
 const lastMeta = ref(false);
