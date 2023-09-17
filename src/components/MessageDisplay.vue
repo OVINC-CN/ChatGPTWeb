@@ -26,7 +26,7 @@ watch(() => props.localMessages, () => {
   if (el) {
     el.scrollTop = el.scrollHeight;
   }
-}, {deep: true, immediate: false});
+}, {deep: true, immediate: true});
 onMounted(() => {
   const el = document.getElementById('chat-display');
   if (el && !props.userBehavior) {
@@ -80,6 +80,5 @@ onUnmounted(() => {
   overflow-y: scroll;
   padding: 0 20px;
   box-sizing: border-box;
-  scroll-behavior: smooth;
 }
 </style>
