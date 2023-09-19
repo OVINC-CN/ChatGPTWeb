@@ -7,7 +7,7 @@
     >
       <a-layout
         id="app-layout"
-        :style="{maxWidth: fullScreen ? '100%' : '1100px'}"
+        :style="{maxWidth: fullScreen ? '100%' : '1600px'}"
       >
         <a-layout-header id="app-header">
           <div>
