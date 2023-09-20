@@ -77,19 +77,21 @@ watch(() => model.value, () => {
 const doChat = () => {
   // set loading
   emits('setChatLoading', true);
-  // push message
-  emits('addMessage', {role: 'user', content: promptForm.value.content});
-  // call api
-  createChatAPI({
+  // params
+  const params = {
     messages: [...props.localMessages, {role: 'user', content: promptForm.value.content}],
     model: model.value,
-  })
+  };
+  // call api
+  createChatAPI(params)
       .then((res) => {
         // check success
         if (!res.ok) {
           Message.error(res.statusText);
           return;
         }
+        // push message
+        emits('addMessage', {role: 'user', content: promptForm.value.content});
         // auto scroll
         emits('toggleUserBehavior', false);
         // init response content
