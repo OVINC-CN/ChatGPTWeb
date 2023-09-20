@@ -39,6 +39,7 @@ const user = computed(() => store.state.user);
       class="message-content-content"
       :style="{
         background: message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
+        textAlign: 'left'
       }"
     >
       <v-md-preview
