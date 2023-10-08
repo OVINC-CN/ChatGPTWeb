@@ -11,10 +11,16 @@ const props = defineProps({
       content: '',
     }),
   },
+  isLast: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const store = useStore();
 const user = computed(() => store.state.user);
+
+const emits = defineEmits(['reGenerate']);
 </script>
 
 <template>
@@ -54,6 +60,11 @@ const user = computed(() => store.state.user);
     >
       {{ user.nick_name }}
     </a-avatar>
+    <icon-refresh
+      @click="emits('reGenerate')"
+      v-if="isLast && message.role === Role.Assistant"
+      class="message-content-content-icon-refresh"
+    />
   </div>
 </template>
 
@@ -83,5 +94,17 @@ const user = computed(() => store.state.user);
   padding: 20px;
   background: var(--color-fill-3);
   margin: 20px 0;
+}
+
+.message-content-content-icon-refresh {
+  min-width: 18px;
+  min-height: 18px;
+  margin: 6px 0 0 6px;
+  cursor: pointer;
+  color: var(--color-neutral-4);
+}
+
+.message-content-content-icon-refresh:hover {
+  color: var(--color-neutral-10);
 }
 </style>
