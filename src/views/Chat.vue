@@ -9,6 +9,9 @@ const localMessageKey = ref('local-message');
 const addMessage = (message) => {
   localMessages.value.push(message);
 };
+const replaceMessages = (messages) => {
+  localMessages.value = messages;
+};
 const saveMessage = () => localStorage.setItem(localMessageKey.value, JSON.stringify(localMessages.value));
 const clearMessages = () => {
   localMessages.value = [];
@@ -29,6 +32,14 @@ const setChatLoading = (status) => handleLoading(chatLoading, status);
 // scroll
 const userBehavior = ref(false);
 const toggleUserBehavior = (status) => userBehavior.value = status;
+
+// reGenerate
+const chatInputRef = ref();
+const reGenerate = () => {
+  chatInputRef.value.reGenerate();
+};
+const promptForm = ref({});
+const setPromptForm = (data) => promptForm.value = data;
 </script>
 
 <template>
@@ -37,10 +48,13 @@ const toggleUserBehavior = (status) => userBehavior.value = status;
       <message-display
         :local-messages="localMessages"
         :user-behavior="userBehavior"
+        :prompt-form="promptForm"
         @toggle-user-behavior="toggleUserBehavior"
+        @re-generate="reGenerate"
       />
       <a-divider />
       <chat-input
+        ref="chatInputRef"
         :local-messages="localMessages"
         :chat-loading="chatLoading"
         @add-message="addMessage"
@@ -48,6 +62,8 @@ const toggleUserBehavior = (status) => userBehavior.value = status;
         @save-message="saveMessage"
         @clear-messages="clearMessages"
         @toggle-user-behavior="toggleUserBehavior"
+        @replace-messages="replaceMessages"
+        @set-prompt-form="setPromptForm"
       />
     </div>
   </div>

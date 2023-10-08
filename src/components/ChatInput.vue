@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 // emits
-const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior']);
+const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior', 'replaceMessages', 'setPromptForm']);
 
 // i18n
 const i18n = useI18n();
@@ -129,6 +129,16 @@ const doChat = async () => {
       .finally(() => emits('setChatLoading', false));
 };
 
+const reGenerate = () => {
+  if (!props.localMessages.length) {
+    return;
+  }
+  emits('setChatLoading', true);
+  emits('replaceMessages', props.localMessages.slice(0, props.localMessages.length - 2));
+  promptForm.value.content = props.localMessages[props.localMessages.length -2].content;
+  doChat();
+};
+
 //  auto submit
 const lastMeta = ref(false);
 const allowSubmitKeys = ref(['Shift', 'Alt', 'Control', 'Meta']);
@@ -144,6 +154,8 @@ const onKeydown = (event) => {
 };
 
 const showEditBox = ref(true);
+
+defineExpose({reGenerate, promptForm});
 </script>
 
 <template>
@@ -166,6 +178,7 @@ const showEditBox = ref(true);
           :auto-size="{minRows: 6, maxRows: 6}"
           :disabled="chatLoading"
           @keydown="onKeydown"
+          @input="emits('toggleUserBehavior', false); emits('setPromptForm', promptForm)"
           @focus="emits('toggleUserBehavior', false)"
         />
       </a-form-item>

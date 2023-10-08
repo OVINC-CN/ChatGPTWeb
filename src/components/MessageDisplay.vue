@@ -1,6 +1,7 @@
 <script setup>
 import MessageContent from './MessageContent.vue';
 import {onMounted, onUnmounted, watch} from 'vue';
+import {Role} from '../constants';
 
 // props
 const props = defineProps({
@@ -12,13 +13,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  promptForm: {
+    type: Object,
+    default: () => ({
+      content: '',
+    }),
+  },
 });
 
 // emits
-const emits = defineEmits(['toggleUserBehavior']);
+const emits = defineEmits(['toggleUserBehavior', 'reGenerate']);
 
 // scroll
-watch(() => props.localMessages, () => {
+const doScroll = () => {
   if (props.userBehavior) {
     return;
   }
@@ -26,6 +33,13 @@ watch(() => props.localMessages, () => {
   if (el) {
     el.scrollTop = el.scrollHeight;
   }
+};
+watch(() => props.localMessages, () => {
+  doScroll();
+}
+, {deep: true, immediate: true});
+watch(() => props.promptForm.content, () => {
+  doScroll();
 }, {deep: true, immediate: true});
 onMounted(() => {
   const el = document.getElementById('chat-display');
@@ -53,9 +67,15 @@ onUnmounted(() => {
     v-show="localMessages.length > 0"
   >
     <message-content
-      v-for="message in localMessages"
+      v-for="(message, index) in localMessages"
       :key="message"
       :message="message"
+      :is-last="index === localMessages.length - 1"
+      @re-generate="emits('reGenerate')"
+    />
+    <message-content
+      v-show="promptForm.content"
+      :message="{role: Role.User, content: promptForm.content}"
     />
   </a-space>
   <div
