@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref, watch} from 'vue';
-import {createChatAPI} from '../api/chat';
+import {createChatAPI, preCheckAPI} from '../api/chat';
 import {Message} from '@arco-design/web-vue';
 import {Role} from '../constants';
 import {useStore} from 'vuex';
@@ -74,7 +74,7 @@ watch(() => model.value, () => {
 });
 
 // chat
-const doChat = () => {
+const doChat = async () => {
   // set loading
   emits('setChatLoading', true);
   // params
@@ -83,7 +83,18 @@ const doChat = () => {
     model: model.value,
   };
   // call api
-  createChatAPI(params)
+  let key = '';
+  await preCheckAPI(params)
+      .then((preRes) => {
+        key = preRes.data.key;
+      }, (err) => {
+        Message.error(err.response.data.message);
+        emits('setChatLoading', false);
+      });
+  if (!key) {
+    return;
+  }
+  createChatAPI({key})
       .then((res) => {
         // check success
         if (!res.ok) {
