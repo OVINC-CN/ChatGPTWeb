@@ -98,6 +98,7 @@ const doChat = async () => {
       .then((res) => {
         // check success
         if (!res.ok) {
+          emits('setChatLoading', false);
           Message.error(res.statusText);
           return;
         }
@@ -121,12 +122,14 @@ const doChat = async () => {
               lastResponseContent.value.content += value;
               read();
             }
+            if (chunk.done) {
+              emits('setChatLoading', false);
+            }
             emits('saveMessage');
           });
         }
         read();
-      })
-      .finally(() => emits('setChatLoading', false));
+      }, () => emits('setChatLoading', false));
 };
 
 const reGenerate = () => {
