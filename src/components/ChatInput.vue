@@ -136,10 +136,20 @@ const reGenerate = () => {
   if (!props.localMessages.length) {
     return;
   }
+  const willingLength = props.localMessages.slice(0, props.localMessages.length - 2).length;
   emits('setChatLoading', true);
   emits('replaceMessages', props.localMessages.slice(0, props.localMessages.length - 2));
   promptForm.value.content = props.localMessages[props.localMessages.length -2].content;
-  doChat();
+  checkForRegenerate(willingLength);
+};
+const checkForRegenerate = (willingLength) => {
+  setTimeout(() => {
+    if (props.localMessages.length === willingLength) {
+      doChat();
+    } else {
+      checkForRegenerate();
+    }
+  }, 500 );
 };
 
 //  auto submit
