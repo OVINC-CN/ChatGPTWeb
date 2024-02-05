@@ -55,6 +55,7 @@ const setPromptForm = (data) => promptForm.value = data;
       <a-divider />
       <chat-input
         ref="chatInputRef"
+        :user-behavior="userBehavior"
         :local-messages="localMessages"
         :chat-loading="chatLoading"
         @add-message="addMessage"
