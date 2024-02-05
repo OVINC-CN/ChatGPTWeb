@@ -16,6 +16,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  userBehavior: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // emits
@@ -207,6 +211,13 @@ defineExpose({reGenerate, promptForm});
               @click="showEditBox = !showEditBox"
             >
               <icon-layers />
+            </a-button>
+            <a-button
+              shape="circle"
+              @click="emits('toggleUserBehavior', false)"
+              v-show="userBehavior"
+            >
+              <icon-arrow-down />
             </a-button>
           </a-space>
           <a-space>
