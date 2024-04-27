@@ -133,7 +133,10 @@ const doChat = async () => {
           });
         }
         read();
-      }, () => emits('setChatLoading', false));
+      }, (err) =>{
+        emits('setChatLoading', false);
+        Message.error(err.message);
+      });
 };
 
 const reGenerate = () => {
