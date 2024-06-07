@@ -125,11 +125,10 @@ const onMessage = (event) => {
 const sendMessage = (message) => {
   initWebSocket().then(
       () => {
-        if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
-          webSocket.value.send(message);
-        } else {
-          Message.error(i18n.t('ConnectionClosedPleaseRetry'));
-        }
+        webSocket.value.send(message);
+      },
+      () => {
+        Message.error(i18n.t('ConnectionClosedPleaseRetry'));
       },
   );
 };
@@ -138,9 +137,20 @@ const sendMessage = (message) => {
 const webSocket = ref(null);
 const retryTimes = ref(0);
 const maxRetryTimes = ref(1000);
+const buildWebSocketPromise = () => {
+  return new Promise((resolve, reject) => {
+    webSocket.value.onopen = (e) => {
+      resolve(e);
+    };
+    webSocket.value.onerror = (e) => {
+      emits('setChatLoading', false);
+      reject(e);
+    };
+  });
+};
 const initWebSocket = () => {
   if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
-    return new Promise();
+    return buildWebSocketPromise();
   }
   webSocket.value = new WebSocket(`${globalContext.webSocketUrl}/chat/`);
   webSocket.value.onmessage = (e) => {
@@ -149,12 +159,7 @@ const initWebSocket = () => {
   webSocket.value.onclose = () => {
     emits('setChatLoading', false);
   };
-  webSocket.value.onerror = (e) => {
-    emits('setChatLoading', false);
-  };
-  return new Promise((resolve) => {
-    webSocket.value.onopen = (e) => resolve(e);
-  });
+  return buildWebSocketPromise();
 };
 const closeWebSocket = () => {
   if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
