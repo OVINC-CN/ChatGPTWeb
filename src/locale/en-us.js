@@ -13,6 +13,9 @@ const mEnUS = {
   NoModelChoosed: 'No Model Choosed',
   VerifyingUserInfo: 'Verifying...',
   Logout: 'Logout',
+  ConnectionClosedPleaseRetry: 'Connection is closed, please try again',
+  ConnectionClosed: 'Connection is closed',
+  ConnectionError: 'Connection Error',
 };
 
 export default mEnUS;

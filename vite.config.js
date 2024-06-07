@@ -7,6 +7,7 @@ export default defineConfig({
     'process.env': {
       BACKEND_URL: process.env.BACKEND_URL,
       SITE_URL: process.env.SITE_URL,
+      WEB_SOCKET_URL: process.env.WEB_SOCKET_URL,
       OVINC_URL: process.env.OVINC_URL,
       OVINC_WEB_URL: process.env.OVINC_WEB_URL,
     },

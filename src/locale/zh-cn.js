@@ -13,6 +13,9 @@ const mZhCN = {
   NoModelChoosed: '未选择模型',
   VerifyingUserInfo: '登录中',
   Logout: '登出',
+  ConnectionClosedPleaseRetry: '连接异常，请重试',
+  ConnectionClosed: '连接已关闭',
+  ConnectionError: '连接异常',
 };
 
 export default mZhCN;

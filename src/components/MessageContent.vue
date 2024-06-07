@@ -49,9 +49,11 @@ const emits = defineEmits(['reGenerate']);
       }"
     >
       <v-md-preview
+        v-show="message.content"
         :text="message.content"
         class="v-md-preview"
       />
+      <icon-loading v-show="!message.content" />
     </div>
     <a-avatar
       v-show="false"
