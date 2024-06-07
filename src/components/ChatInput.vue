@@ -1,10 +1,11 @@
 <script setup>
-import {computed, ref, watch} from 'vue';
-import {createChatAPI, preCheckAPI} from '../api/chat';
+import {computed, onBeforeUnmount, ref, watch} from 'vue';
+import {preCheckAPI} from '../api/chat';
 import {Message} from '@arco-design/web-vue';
 import {Role} from '../constants';
 import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
+import globalContext from '../context';
 
 // props
 const props = defineProps({
@@ -78,6 +79,7 @@ watch(() => model.value, () => {
 });
 
 // chat
+const lastResponseContent = ref(null);
 const doChat = async () => {
   // set loading
   emits('setChatLoading', true);
@@ -98,46 +100,70 @@ const doChat = async () => {
   if (!key) {
     return;
   }
-  createChatAPI({key})
-      .then((res) => {
-        // check success
-        if (!res.ok) {
-          emits('setChatLoading', false);
-          Message.error(res.statusText);
-          return;
-        }
-        // push message
-        emits('addMessage', {role: 'user', content: promptForm.value.content});
-        // auto scroll
-        emits('toggleUserBehavior', false);
-        // init response content
-        const lastResponseContent = ref({role: Role.Assistant, content: ''});
-        emits('addMessage', lastResponseContent.value);
-        // clear input
-        promptForm.value.content = '';
-        // decode chunk
-        const decoder = new TextDecoder('utf-8');
-        const reader = res.body.getReader();
-        // eslint-disable-next-line require-jsdoc
-        function read() {
-          reader.read().then((chunk) => {
-            if (!chunk.done) {
-              const value = decoder.decode(chunk.value);
-              lastResponseContent.value.content += value;
-              read();
-            }
-            if (chunk.done) {
-              emits('setChatLoading', false);
-            }
-            emits('saveMessage');
-          });
-        }
-        read();
-      }, (err) =>{
-        emits('setChatLoading', false);
-        Message.error(err.message);
-      });
+  // add message to display
+  emits('addMessage', {role: 'user', content: promptForm.value.content});
+  // auto scroll
+  emits('toggleUserBehavior', false);
+  // init response content
+  lastResponseContent.value = {role: Role.Assistant, content: ''};
+  emits('addMessage', lastResponseContent.value);
+  // clear input
+  promptForm.value.content = '';
+  // send message
+  sendMessage(JSON.stringify({key}), true);
 };
+const onMessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.is_finished) {
+    emits('setChatLoading', false);
+  }
+  if (data.data) {
+    lastResponseContent.value.content += data.data;
+    emits('saveMessage');
+  }
+};
+const sendMessage = (message) => {
+  initWebSocket().then(
+      () => {
+        webSocket.value.send(message);
+      },
+      () => {
+        Message.error(i18n.t('ConnectionClosedPleaseRetry'));
+      },
+  );
+};
+
+// webSocket
+const webSocket = ref(null);
+const retryTimes = ref(0);
+const maxRetryTimes = ref(1000);
+const initWebSocket = () => {
+  if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
+    return new Promise((resolve) => resolve());
+  }
+  webSocket.value = new WebSocket(`${globalContext.webSocketUrl}/chat/`);
+  webSocket.value.onmessage = (e) => {
+    onMessage(e);
+  };
+  webSocket.value.onclose = () => {
+    emits('setChatLoading', false);
+  };
+  return new Promise((resolve, reject) => {
+    webSocket.value.onopen = (e) => {
+      resolve(e);
+    };
+    webSocket.value.onerror = (e) => {
+      emits('setChatLoading', false);
+      reject(e);
+    };
+  });
+};
+const closeWebSocket = () => {
+  if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
+    webSocket.value.close();
+  }
+};
+onBeforeUnmount(() => closeWebSocket());
 
 const reGenerate = () => {
   if (!props.localMessages.length) {
