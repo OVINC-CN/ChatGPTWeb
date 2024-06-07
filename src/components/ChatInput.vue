@@ -137,7 +137,17 @@ const sendMessage = (message) => {
 const webSocket = ref(null);
 const retryTimes = ref(0);
 const maxRetryTimes = ref(1000);
-const buildWebSocketPromise = () => {
+const initWebSocket = () => {
+  if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
+    return new Promise((resolve) => resolve());
+  }
+  webSocket.value = new WebSocket(`${globalContext.webSocketUrl}/chat/`);
+  webSocket.value.onmessage = (e) => {
+    onMessage(e);
+  };
+  webSocket.value.onclose = () => {
+    emits('setChatLoading', false);
+  };
   return new Promise((resolve, reject) => {
     webSocket.value.onopen = (e) => {
       resolve(e);
@@ -147,19 +157,6 @@ const buildWebSocketPromise = () => {
       reject(e);
     };
   });
-};
-const initWebSocket = () => {
-  if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
-    return buildWebSocketPromise();
-  }
-  webSocket.value = new WebSocket(`${globalContext.webSocketUrl}/chat/`);
-  webSocket.value.onmessage = (e) => {
-    onMessage(e);
-  };
-  webSocket.value.onclose = () => {
-    emits('setChatLoading', false);
-  };
-  return buildWebSocketPromise();
 };
 const closeWebSocket = () => {
   if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
