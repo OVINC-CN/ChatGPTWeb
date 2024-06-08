@@ -1,0 +1,16 @@
+{
+  "template": "https://github.com/OVINC-CN/DevTemplateVue.git",
+  "commit": "14d394c83d0051c6403371c1c572a7d15b96b87e",
+  "checkout": "main",
+  "context": {
+    "cookiecutter": {
+      "project_name": "chatgpt-web",
+      "_copy_without_render": [
+        ".github",
+        "src"
+      ],
+      "_template": "https://github.com/OVINC-CN/DevTemplateVue.git"
+    }
+  },
+  "directory": null
+}
