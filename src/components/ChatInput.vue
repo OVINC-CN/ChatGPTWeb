@@ -7,7 +7,7 @@ import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
 import globalContext from '../context';
 import {checkTCaptcha} from '@/utils/tcaptcha';
-import {extractFileAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
+import {extractFileAPI, extractFileStatusAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
 import {loadCOSClient} from '@/utils/cos';
 
 // props
@@ -98,8 +98,8 @@ const doChat = async () => {
       .then((preRes) => {
         key = preRes.data.key;
       }, (err) => {
-        Message.error(err.response.data.message);
         emits('setChatLoading', false);
+        Message.error(err.response.data.message);
       });
   if (!key) {
     return;
@@ -230,21 +230,50 @@ const handleFileChange = (event) => {
               },
               (err) => {
                 if (err) {
+                  emits('setChatLoading', false);
                   Message.error(err.message);
-                  emits('setChatLoading', false);
                 } else {
-                  extractFileAPI(credentials.key);
-                  promptForm.value.file = `${credentials.cos_url}${credentials.key}`;
-                  emits('setChatLoading', false);
+                  const filePath = `${credentials.cos_url}${credentials.key}`;
+                  extractFileAPI(filePath).then(
+                      () => {
+                        checkExtractStatus(filePath);
+                      },
+                      (err) => {
+                        emits('setChatLoading', false);
+                        Message.error(err.response.data.message);
+                      },
+                  );
                 }
               });
         },
         (err) => {
-          Message.error(err.response.data.message);
           emits('setChatLoading', false);
+          Message.error(err.response.data.message);
         },
     );
   });
+};
+const checkExtractStatus = (filePath) => {
+  setTimeout(() => {
+    extractFileStatusAPI(filePath).then(
+        (res) => {
+          if (res.data.is_finished) {
+            if (res.data.is_success) {
+              promptForm.value.file = filePath;
+            } else {
+              Message.error(i18n.t('ExtractFileFailed'));
+            }
+            emits('setChatLoading', false);
+          } else {
+            checkExtractStatus(filePath);
+          }
+        },
+        (err) => {
+          emits('setChatLoading', false);
+          Message.error(err.response.data.message);
+        },
+    );
+  }, 2000);
 };
 
 defineExpose({reGenerate, promptForm});

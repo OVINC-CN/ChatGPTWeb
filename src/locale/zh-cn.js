@@ -19,6 +19,7 @@ const mZhCN = {
   UploadFile: '上传',
   SupportFileTypes: '仅支持图片或PDF',
   ReUploadFile: '覆盖',
+  ExtractFileFailed: '解析文件失败，请重新上传',
 };
 
 export default mZhCN;

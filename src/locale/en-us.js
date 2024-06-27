@@ -19,6 +19,7 @@ const mEnUS = {
   UploadFile: 'Upload',
   SupportFileTypes: 'Only support for image or pdf',
   ReUploadFile: 'Re-Upload',
+  ExtractFileFailed: 'Extract file failed, please try again',
 };
 
 export default mEnUS;
