@@ -56,12 +56,12 @@ const emits = defineEmits(['reGenerate']);
         class="v-md-preview"
       />
       <a-link
+        v-if="message.file"
         :href="message.file"
         target="_blank"
         style="padding: unset"
       >
         <a-space
-          v-if="message.file"
           :size="2"
         >
           <icon-file />
