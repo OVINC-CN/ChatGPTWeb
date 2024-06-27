@@ -210,6 +210,10 @@ const uploadEnabled = ref(false);
 onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
 const fileUploadInput = ref(null);
 const customUpload = () => {
+  if (promptForm.value.file) {
+    promptForm.value.file = null;
+    return;
+  }
   fileUploadInput.value.click();
 };
 const handleFileChange = (event) => {
@@ -344,9 +348,9 @@ defineExpose({reGenerate, promptForm});
               :loading="chatLoading"
               @click="customUpload"
               type="primary"
-              status="success"
+              :status="promptForm.file ? 'warning' : 'success'"
             >
-              {{ promptForm.file ? $t('ReUploadFile') : $t('UploadFile') }}
+              {{ promptForm.file ? $t('RemoveFile') : $t('UploadFile') }}
             </a-button>
             <a-button
               type="primary"
