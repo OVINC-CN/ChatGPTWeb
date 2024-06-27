@@ -36,3 +36,13 @@ html, body, #app {
 .arco-btn-icon {
     line-height: 0
 }
+
+*::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+    background: var(--color-neutral-2);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgb(var(--arcoblue-3));
+}

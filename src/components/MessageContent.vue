@@ -80,7 +80,7 @@ const emits = defineEmits(['reGenerate']);
   padding: 10px;
   box-sizing: border-box;
   border-radius: var(--border-radius-small);
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .v-md-preview :deep(.github-markdown-body) {
