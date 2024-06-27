@@ -16,6 +16,9 @@ const mZhCN = {
   ConnectionClosedPleaseRetry: '连接异常，请重试',
   ConnectionClosed: '连接已关闭',
   ConnectionError: '连接异常',
+  UploadFile: '上传文件',
+  SupportFileTypes: '仅支持图片或PDF',
+  ReUploadFile: '重新上传',
 };
 
 export default mZhCN;
