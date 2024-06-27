@@ -3,7 +3,7 @@ import enUS from '@arco-design/web-vue/es/locale/lang/en-us';
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn';
 import mZhCN from './zh-cn';
 import mEnUS from './en-us';
-import {changeLangAPI} from '../api/home';
+import {changeLangAPI} from '@/api/home';
 
 // language option
 export const langOption = [
@@ -12,12 +12,14 @@ export const langOption = [
     value: 'zhCN',
     locale: zhCN,
     backend: 'zh-hans',
+    tcaptcha: 'zh-cn',
   },
   {
     name: 'English',
     value: 'enUS',
     locale: enUS,
     backend: 'en',
+    tcaptcha: 'en',
   },
 ];
 
@@ -27,6 +29,7 @@ const userLangKey = 'user-language';
 // default language
 let mLocal = 'zhCN';
 export let locale = zhCN;
+export let tCaptchaLocale = 'zh-cn';
 
 // change language
 export const changeLang = async (value) => {
@@ -38,6 +41,7 @@ export const changeLang = async (value) => {
   });
   locale = curLang.locale;
   mLocal = curLang.value;
+  tCaptchaLocale = curLang.tcaptcha;
   await changeLangAPI(curLang.backend).then(() => {
     localStorage.setItem(userLangKey, value);
   });

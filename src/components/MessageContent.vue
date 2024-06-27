@@ -1,7 +1,8 @@
 <script setup>
-import {Role} from '../constants';
+import {Role} from '@/constants';
 import {useStore} from 'vuex';
 import {computed} from 'vue';
+import {IconFile} from '@arco-design/web-vue/es/icon';
 
 const props = defineProps({
   message: {
@@ -9,6 +10,7 @@ const props = defineProps({
     default: () => ({
       role: Role.Assistant,
       content: '',
+      file: null,
     }),
   },
   isLast: {
@@ -53,6 +55,19 @@ const emits = defineEmits(['reGenerate']);
         :text="message.content"
         class="v-md-preview"
       />
+      <a-link
+        v-if="message.file"
+        :href="message.file"
+        target="_blank"
+        style="padding: unset"
+      >
+        <a-space
+          :size="2"
+        >
+          <icon-file />
+          {{ message.file.split('/').slice(-1)[0] }}
+        </a-space>
+      </a-link>
       <icon-loading v-show="!message.content" />
     </div>
     <a-avatar

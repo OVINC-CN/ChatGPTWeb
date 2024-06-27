@@ -1,11 +1,14 @@
 <script setup>
-import {computed, onBeforeUnmount, ref, watch} from 'vue';
-import {preCheckAPI} from '../api/chat';
+import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import {preCheckAPI} from '@/api/chat';
 import {Message} from '@arco-design/web-vue';
-import {Role} from '../constants';
+import {Role} from '@/constants';
 import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
 import globalContext from '../context';
+import {checkTCaptcha} from '@/utils/tcaptcha';
+import {extractFileAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
+import {loadCOSClient} from '@/utils/cos';
 
 // props
 const props = defineProps({
@@ -32,6 +35,7 @@ const i18n = useI18n();
 // user input
 const promptForm = ref({
   content: '',
+  file: '',
 });
 
 // store
@@ -85,7 +89,7 @@ const doChat = async () => {
   emits('setChatLoading', true);
   // params
   const params = {
-    messages: [...props.localMessages, {role: 'user', content: promptForm.value.content}],
+    messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file}],
     model: model.value,
   };
   // call api
@@ -101,7 +105,7 @@ const doChat = async () => {
     return;
   }
   // add message to display
-  emits('addMessage', {role: 'user', content: promptForm.value.content});
+  emits('addMessage', {role: 'user', content: promptForm.value.content, file: promptForm.value.file});
   // auto scroll
   emits('toggleUserBehavior', false);
   // init response content
@@ -109,6 +113,7 @@ const doChat = async () => {
   emits('addMessage', lastResponseContent.value);
   // clear input
   promptForm.value.content = '';
+  promptForm.value.file = null;
   // send message
   sendMessage(JSON.stringify({key}), true);
 };
@@ -135,8 +140,6 @@ const sendMessage = (message) => {
 
 // webSocket
 const webSocket = ref(null);
-const retryTimes = ref(0);
-const maxRetryTimes = ref(1000);
 const initWebSocket = () => {
   if (webSocket.value && webSocket.value.readyState === WebSocket.OPEN) {
     return new Promise((resolve) => resolve());
@@ -173,6 +176,7 @@ const reGenerate = () => {
   emits('setChatLoading', true);
   emits('replaceMessages', props.localMessages.slice(0, props.localMessages.length - 2));
   promptForm.value.content = props.localMessages[props.localMessages.length -2].content;
+  promptForm.value.file = props.localMessages[props.localMessages.length -2].file;
   checkForRegenerate(willingLength);
 };
 const checkForRegenerate = (willingLength) => {
@@ -201,6 +205,48 @@ const onKeydown = (event) => {
 
 const showEditBox = ref(true);
 
+// upload file
+const uploadEnabled = ref(false);
+onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
+const fileUploadInput = ref(null);
+const customUpload = () => {
+  fileUploadInput.value.click();
+};
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  fileUploadInput.value.value = null;
+  emits('setChatLoading', true);
+  checkTCaptcha((ret) => {
+    getCOSUploadTempKeyAPI(file.name, 'file-extract', ret).then(
+        (res) => {
+          const credentials = res.data;
+          const cos = loadCOSClient(credentials);
+          cos.putObject(
+              {
+                Bucket: credentials.cos_bucket,
+                Region: credentials.cos_region,
+                Key: credentials.key,
+                Body: file,
+              },
+              (err) => {
+                if (err) {
+                  Message.error(err.message);
+                  emits('setChatLoading', false);
+                } else {
+                  extractFileAPI(credentials.key);
+                  promptForm.value.file = `${credentials.cos_url}${credentials.key}`;
+                  emits('setChatLoading', false);
+                }
+              });
+        },
+        (err) => {
+          Message.error(err.response.data.message);
+          emits('setChatLoading', false);
+        },
+    );
+  });
+};
+
 defineExpose({reGenerate, promptForm});
 </script>
 
@@ -209,6 +255,12 @@ defineExpose({reGenerate, promptForm});
     id="chat-input"
     :style="{height: showEditBox ? '214px' : '32px'}"
   >
+    <input
+      ref="fileUploadInput"
+      style="display: none"
+      type="file"
+      @change="handleFileChange"
+    >
     <a-form
       :model="promptForm"
       @submit="doChat"
@@ -256,6 +308,16 @@ defineExpose({reGenerate, promptForm});
               v-show="showEditBox"
             >
               {{ $t('ClearMessage') }}
+            </a-button>
+            <a-button
+              v-if="uploadEnabled"
+              v-show="showEditBox"
+              :loading="chatLoading"
+              @click="customUpload"
+              type="primary"
+              status="success"
+            >
+              {{ promptForm.file ? $t('ReUploadFile') : $t('UploadFile') }}
             </a-button>
             <a-button
               type="primary"
