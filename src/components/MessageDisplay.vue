@@ -97,7 +97,7 @@ onUnmounted(() => {
 .chat-display {
   min-width: 100%;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 0 20px;
   box-sizing: border-box;
 }
