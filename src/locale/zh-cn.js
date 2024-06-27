@@ -6,8 +6,8 @@ const mZhCN = {
   ChatGPTOVINC: 'ChatGPT | OVINC',
   PermissionDenied: '无访问权限',
   Chat: '对话',
-  SendMessage: '发送消息',
-  ClearMessage: '清空消息',
+  SendMessage: '发送',
+  ClearMessage: '清空',
   NoModelPermission: '未授权模型',
   CurrentModel: '当前模型',
   NoModelChoosed: '未选择模型',
@@ -16,9 +16,9 @@ const mZhCN = {
   ConnectionClosedPleaseRetry: '连接异常，请重试',
   ConnectionClosed: '连接已关闭',
   ConnectionError: '连接异常',
-  UploadFile: '上传文件',
+  UploadFile: '上传',
   SupportFileTypes: '仅支持图片或PDF',
-  ReUploadFile: '重新上传',
+  ReUploadFile: '覆盖',
 };
 
 export default mZhCN;
