@@ -44,6 +44,7 @@ const store = useStore();
 // model
 const model = computed(() => store.state.currentModel);
 const modelName = ref('');
+const modelDesc = ref('');
 const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
 watch(() => allModels.value, () => {
@@ -56,6 +57,7 @@ watch(() => allModels.value, () => {
     if (item.id === value) {
       store.commit('setCurrentModel', value);
       modelName.value = item.name;
+      modelDesc.value = item.desc;
       matched = true;
     }
   });
@@ -64,6 +66,7 @@ watch(() => allModels.value, () => {
   }
   store.commit('setCurrentModel', allModels.value[0].id);
   modelName.value = allModels.value[0].name;
+  modelDesc.value = allModels.value[0].desc;
 }, {deep: true, immediate: true});
 watch(() => model.value, () => {
   if (!allModels.value.length) {
@@ -73,6 +76,7 @@ watch(() => model.value, () => {
   allModels.value.forEach((item) => {
     if (item.id === model.value) {
       modelName.value = item.name;
+      modelDesc.value = item.desc;
       matched = true;
     }
   });
@@ -80,6 +84,7 @@ watch(() => model.value, () => {
     return;
   }
   modelName.value = model.value;
+  modelDesc.value = model.value.desc;
 });
 
 // chat
@@ -305,7 +310,7 @@ defineExpose({reGenerate, promptForm});
       >
         <a-textarea
           v-model="promptForm.content"
-          :placeholder="model ? ($t('CurrentModel') + ': ' + modelName) : $t('NoModelChoosed')"
+          :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
           :auto-size="{minRows: 6, maxRows: 6}"
           :disabled="chatLoading"
           @keydown="onKeydown"
