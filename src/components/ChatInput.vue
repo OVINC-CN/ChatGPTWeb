@@ -352,129 +352,72 @@ defineExpose({reGenerate, promptForm});
       >
         <a-space style="display: flex; width: 100%; justify-content: space-between;">
           <a-space>
-            <a-tooltip
+            <a-button
               v-if="userBehavior && chatLoading"
-              :background-color="'var(--color-fill-1)'"
-              @click.stop
+              @click="emits('toggleUserBehavior', false)"
+              @touchstart="emits('toggleUserBehavior', false)"
+              class="chat-input-left-button"
             >
-              <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('ToBottom') }}
-                </span>
-              </template>
+              <icon-arrow-down />
+            </a-button>
+            <a-dropdown
+              @select="setModel"
+              v-if="showEditBox"
+            >
               <a-button
-                @click="emits('toggleUserBehavior', false)"
+                :disabled="chatLoading"
                 class="chat-input-left-button"
               >
-                <icon-arrow-down />
+                <icon-robot />
               </a-button>
-            </a-tooltip>
-            <a-tooltip
-              v-if="showEditBox"
-              :background-color="'var(--color-fill-1)'"
-              @click.stop
-            >
               <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('ChooseModel') }}
-                </span>
-              </template>
-              <a-dropdown @select="setModel">
-                <a-button
-                  :disabled="chatLoading"
-                  class="chat-input-left-button"
+                <a-doption
+                  v-for="item in models"
+                  :key="item.id"
+                  :value="item.id"
                 >
-                  <icon-robot />
-                </a-button>
-                <template #content>
-                  <a-doption
-                    v-for="item in models"
-                    :key="item.id"
-                    :value="item.id"
-                  >
-                    {{ item.name }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-            </a-tooltip>
-            <a-tooltip
-              :background-color="'var(--color-fill-1)'"
-              v-if="showEditBox"
-              @click.stop
-            >
-              <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('SystemDefine') }}
-                </span>
+                  {{ item.name }}
+                </a-doption>
               </template>
-              <a-button
-                :disabled="chatLoading"
-                @click="changePreset"
-                class="chat-input-left-button"
-                :type="props.systemDefine ? 'primary': undefined"
-                :status="props.systemDefine ? 'warning' : undefined"
-              >
-                <icon-bulb />
-              </a-button>
-            </a-tooltip>
-            <a-tooltip
-              :background-color="'var(--color-fill-1)'"
+            </a-dropdown>
+            <a-button
+              v-if="showEditBox"
+              :disabled="chatLoading"
+              @click="changePreset"
+              class="chat-input-left-button"
+              :type="props.systemDefine ? 'primary': undefined"
+              :status="props.systemDefine ? 'warning' : undefined"
+            >
+              <icon-bulb />
+            </a-button>
+            <a-button
               v-if="uploadEnabled && showEditBox"
-              @click.stop
+              :disabled="chatLoading"
+              @click="customUpload"
+              :type="promptForm.file ? 'primary': undefined"
+              :status="promptForm.file ? 'warning' : undefined"
+              class="chat-input-left-button"
             >
-              <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ promptForm.file ? $t('RemoveFile') : $t('UploadFile') }}
-                </span>
-              </template>
-              <a-button
-                :disabled="chatLoading"
-                @click="customUpload"
-                :type="promptForm.file ? 'primary': undefined"
-                :status="promptForm.file ? 'warning' : undefined"
-                class="chat-input-left-button"
-              >
-                <icon-file />
-              </a-button>
-            </a-tooltip>
-            <a-tooltip
-              :background-color="'var(--color-fill-1)'"
+              <icon-file />
+            </a-button>
+            <a-button
               v-if="showEditBox"
-              @click.stop
+              :disabled="chatLoading"
+              @click="emits('clearMessages')"
+              class="chat-input-left-button"
             >
-              <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('ClearMessage') }}
-                </span>
-              </template>
-              <a-button
-                :disabled="chatLoading"
-                @click="emits('clearMessages')"
-                class="chat-input-left-button"
-              >
-                <icon-delete />
-              </a-button>
-            </a-tooltip>
+              <icon-delete />
+            </a-button>
           </a-space>
           <a-space>
-            <a-tooltip
-              :background-color="'var(--color-fill-1)'"
+            <a-button
               v-if="showEditBox"
-              @click.stop
+              type="primary"
+              html-type="submit"
+              :disabled="promptForm.content.length <= 0 || !model || chatLoading"
             >
-              <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('SendMessage') }}
-                </span>
-              </template>
-              <a-button
-                type="primary"
-                html-type="submit"
-                :disabled="promptForm.content.length <= 0 || !model || chatLoading"
-              >
-                <icon-send />
-              </a-button>
-            </a-tooltip>
+              <icon-send />
+            </a-button>
           </a-space>
         </a-space>
       </a-form-item>
