@@ -23,6 +23,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  chatLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // emits
@@ -79,6 +83,7 @@ onUnmounted(() => {
       :key="message"
       :message="message"
       :is-last="index === localMessages.length - 1"
+      :chat-loading="chatLoading"
       @re-generate="emits('reGenerate')"
     />
     <message-content

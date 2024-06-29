@@ -17,6 +17,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  chatLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const store = useStore();
@@ -76,7 +80,7 @@ const emits = defineEmits(['reGenerate']);
           {{ message.file.split('/').slice(-1)[0] }}
         </a-space>
       </a-link>
-      <icon-loading v-show="!message.content" />
+      <icon-loading v-show="!message.content && chatLoading" />
     </div>
     <a-avatar
       v-show="false"
@@ -87,7 +91,7 @@ const emits = defineEmits(['reGenerate']);
     </a-avatar>
     <icon-refresh
       @click="emits('reGenerate')"
-      v-if="isLast && message.role === Role.Assistant"
+      v-if="isLast && !chatLoading && message.role === Role.Assistant"
       class="message-content-content-icon-refresh"
     />
   </div>

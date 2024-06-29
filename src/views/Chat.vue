@@ -66,6 +66,7 @@ const setPromptForm = (data) => promptForm.value = data;
         :user-behavior="userBehavior"
         :prompt-form="promptForm"
         :system-define="systemDefine"
+        :chat-loading="chatLoading"
         @toggle-user-behavior="toggleUserBehavior"
         @re-generate="reGenerate"
       />
