@@ -352,13 +352,6 @@ defineExpose({reGenerate, promptForm});
       >
         <a-space style="display: flex; width: 100%; justify-content: space-between;">
           <a-space>
-            <a-button
-              @click="showEditBox = !showEditBox"
-              v-if="false"
-              class="chat-input-left-button"
-            >
-              <icon-layers />
-            </a-button>
             <a-tooltip
               v-if="userBehavior && chatLoading"
               :background-color="'var(--color-fill-1)'"
@@ -375,33 +368,23 @@ defineExpose({reGenerate, promptForm});
                 <icon-arrow-down />
               </a-button>
             </a-tooltip>
-            <a-tooltip
-              :background-color="'var(--color-fill-1)'"
-              v-if="showEditBox"
-            >
+            <a-dropdown @select="setModel">
+              <a-button
+                :disabled="chatLoading"
+                class="chat-input-left-button"
+              >
+                <icon-robot />
+              </a-button>
               <template #content>
-                <span style="color: var(--color-text-2)">
-                  {{ $t('ChooseModel') }}
-                </span>
-              </template>
-              <a-dropdown @select="setModel">
-                <a-button
-                  :disabled="chatLoading"
-                  class="chat-input-left-button"
+                <a-doption
+                  v-for="item in models"
+                  :key="item.id"
+                  :value="item.id"
                 >
-                  <icon-robot />
-                </a-button>
-                <template #content>
-                  <a-doption
-                    v-for="item in models"
-                    :key="item.id"
-                    :value="item.id"
-                  >
-                    {{ item.name }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-            </a-tooltip>
+                  {{ item.name }}
+                </a-doption>
+              </template>
+            </a-dropdown>
             <a-tooltip
               :background-color="'var(--color-fill-1)'"
               v-if="showEditBox"
@@ -485,15 +468,21 @@ defineExpose({reGenerate, promptForm});
         style="margin-bottom: 0;"
         v-show="showEditBox"
       >
-        <a-textarea
-          v-model="promptForm.content"
-          :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
-          :auto-size="{minRows: 3, maxRows: 10}"
-          :disabled="chatLoading"
-          @keydown="onKeydown"
-          @input="emits('toggleUserBehavior', false); emits('setPromptForm', promptForm)"
-          @focus="emits('toggleUserBehavior', false)"
-        />
+        <a-spin
+          dot
+          style="width: 100%"
+          :loading="chatLoading"
+        >
+          <a-textarea
+            v-model="promptForm.content"
+            :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
+            :auto-size="{minRows: 3, maxRows: 10}"
+            :disabled="chatLoading"
+            @keydown="onKeydown"
+            @input="emits('toggleUserBehavior', false); emits('setPromptForm', promptForm)"
+            @focus="emits('toggleUserBehavior', false)"
+          />
+        </a-spin>
       </a-form-item>
     </a-form>
     <a-modal
