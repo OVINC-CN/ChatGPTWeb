@@ -312,9 +312,9 @@ const loadSystemPresets = () => {
       (res) => systemPresets.value = res.data,
   );
 };
+onMounted(() => loadSystemPresets());
 const customSystemDefine = ref('');
 watch(() => props.systemDefine, () => customSystemDefine.value = props.systemDefine);
-onMounted(() => loadSystemPresets());
 const doSubmitPreset = () => {
   presetVisible.value = false;
   setSystemDefine(customSystemDefine.value);

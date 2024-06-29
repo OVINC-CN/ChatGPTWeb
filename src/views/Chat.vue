@@ -34,14 +34,19 @@ const localSystemDefineKey = ref('local-system-define');
 const systemDefine = ref('');
 const setSystemDefine = (define) => {
   systemDefine.value = define;
-  localStorage.setItem(localSystemDefineKey.value, define);
+  localStorage.setItem(localSystemDefineKey.value, JSON.stringify(define));
 };
 onMounted(() => {
   const value = localStorage.getItem(localSystemDefineKey.value);
   if (value) {
-    setSystemDefine(value);
+    try {
+      setSystemDefine(JSON.parse(value));
+    } catch (e) {
+      console.log(e);
+      setSystemDefine('');
+    }
   } else {
-    systemDefine.value = '';
+    setSystemDefine('');
   }
 });
 
