@@ -355,6 +355,7 @@ defineExpose({reGenerate, promptForm});
             <a-tooltip
               v-if="userBehavior && chatLoading"
               :background-color="'var(--color-fill-1)'"
+              @click.stop
             >
               <template #content>
                 <span style="color: var(--color-text-2)">
@@ -368,26 +369,38 @@ defineExpose({reGenerate, promptForm});
                 <icon-arrow-down />
               </a-button>
             </a-tooltip>
-            <a-dropdown @select="setModel">
-              <a-button
-                :disabled="chatLoading"
-                class="chat-input-left-button"
-              >
-                <icon-robot />
-              </a-button>
+            <a-tooltip
+              v-if="showEditBox"
+              :background-color="'var(--color-fill-1)'"
+              @click.stop
+            >
               <template #content>
-                <a-doption
-                  v-for="item in models"
-                  :key="item.id"
-                  :value="item.id"
-                >
-                  {{ item.name }}
-                </a-doption>
+                <span style="color: var(--color-text-2)">
+                  {{ $t('ChooseModel') }}
+                </span>
               </template>
-            </a-dropdown>
+              <a-dropdown @select="setModel">
+                <a-button
+                  :disabled="chatLoading"
+                  class="chat-input-left-button"
+                >
+                  <icon-robot />
+                </a-button>
+                <template #content>
+                  <a-doption
+                    v-for="item in models"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </a-doption>
+                </template>
+              </a-dropdown>
+            </a-tooltip>
             <a-tooltip
               :background-color="'var(--color-fill-1)'"
               v-if="showEditBox"
+              @click.stop
             >
               <template #content>
                 <span style="color: var(--color-text-2)">
@@ -407,6 +420,7 @@ defineExpose({reGenerate, promptForm});
             <a-tooltip
               :background-color="'var(--color-fill-1)'"
               v-if="uploadEnabled && showEditBox"
+              @click.stop
             >
               <template #content>
                 <span style="color: var(--color-text-2)">
@@ -426,6 +440,7 @@ defineExpose({reGenerate, promptForm});
             <a-tooltip
               :background-color="'var(--color-fill-1)'"
               v-if="showEditBox"
+              @click.stop
             >
               <template #content>
                 <span style="color: var(--color-text-2)">
@@ -445,6 +460,7 @@ defineExpose({reGenerate, promptForm});
             <a-tooltip
               :background-color="'var(--color-fill-1)'"
               v-if="showEditBox"
+              @click.stop
             >
               <template #content>
                 <span style="color: var(--color-text-2)">
@@ -488,6 +504,7 @@ defineExpose({reGenerate, promptForm});
     <a-modal
       v-model:visible="presetVisible"
       :footer="false"
+      :esc-to-close="true"
       @cancel="presetVisible = false"
     >
       <template #title>

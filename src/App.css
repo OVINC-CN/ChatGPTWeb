@@ -17,7 +17,7 @@ html, body, #app {
 }
 
 html {
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .arco-icon {
