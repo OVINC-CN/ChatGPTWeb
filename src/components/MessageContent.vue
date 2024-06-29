@@ -46,15 +46,23 @@ const emits = defineEmits(['reGenerate']);
     <div
       class="message-content-content"
       :style="{
-        background: message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
+        background: message.role === Role.System ? 'rgb(var(--orange-1)' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
         textAlign: 'left'
       }"
     >
+      <div
+        v-if="message.role === Role.System"
+        style="margin-bottom: 10px"
+      >
+        <icon-bulb />
+        {{ $t('SystemDefine') }}
+      </div>
       <v-md-preview
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
       />
+
       <a-link
         v-if="message.file"
         :href="message.file"

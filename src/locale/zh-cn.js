@@ -20,7 +20,14 @@ const mZhCN = {
   SupportFileTypes: '仅支持图片或PDF',
   ReUploadFile: '覆盖',
   ExtractFileFailed: '解析文件失败，请重新上传',
-  RemoveFile: '移除',
+  RemoveFile: '移除文件',
+  ChooseModel: '模型',
+  ToBottom: '置底',
+  SystemDefine: '预设',
+  RemoveDefine: '移除预设',
+  Reset: '重置',
+  Save: '保存',
+  PleaseChoosePreset: '请选择预设',
 };
 
 export default mZhCN;

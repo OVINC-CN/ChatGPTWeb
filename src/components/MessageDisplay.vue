@@ -1,7 +1,7 @@
 <script setup>
 import MessageContent from './MessageContent.vue';
 import {onMounted, onUnmounted, watch} from 'vue';
-import {Role} from '../constants';
+import {Role} from '@/constants';
 
 // props
 const props = defineProps({
@@ -18,6 +18,10 @@ const props = defineProps({
     default: () => ({
       content: '',
     }),
+  },
+  systemDefine: {
+    type: String,
+    default: '',
   },
 });
 
@@ -64,8 +68,12 @@ onUnmounted(() => {
     :size="[20, 20]"
     class="chat-display"
     direction="vertical"
-    v-show="localMessages.length > 0"
+    v-show="localMessages.length > 0 || systemDefine"
   >
+    <message-content
+      v-if="systemDefine"
+      :message="{role: 'system', content: systemDefine}"
+    />
     <message-content
       v-for="(message, index) in localMessages"
       :key="message"

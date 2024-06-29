@@ -1,8 +1,8 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import ChatInput from '../components/ChatInput.vue';
-import {handleLoading} from '../utils/loading';
-import MessageDisplay from '../components/MessageDisplay.vue';
+import {handleLoading} from '@/utils/loading';
+import MessageDisplay from '@/components/MessageDisplay.vue';
 
 const localMessages = ref([]);
 const localMessageKey = ref('local-message');
@@ -29,6 +29,22 @@ onMounted(() => {
 const chatLoading = ref(false);
 const setChatLoading = (status) => handleLoading(chatLoading, status);
 
+// System Define
+const localSystemDefineKey = ref('local-system-define');
+const systemDefine = ref('');
+const setSystemDefine = (define) => {
+  systemDefine.value = define;
+  localStorage.setItem(localSystemDefineKey.value, define);
+};
+onMounted(() => {
+  const value = localStorage.getItem(localSystemDefineKey.value);
+  if (value) {
+    setSystemDefine(value);
+  } else {
+    systemDefine.value = '';
+  }
+});
+
 // scroll
 const userBehavior = ref(false);
 const toggleUserBehavior = (status) => userBehavior.value = status;
@@ -49,6 +65,7 @@ const setPromptForm = (data) => promptForm.value = data;
         :local-messages="localMessages"
         :user-behavior="userBehavior"
         :prompt-form="promptForm"
+        :system-define="systemDefine"
         @toggle-user-behavior="toggleUserBehavior"
         @re-generate="reGenerate"
       />
@@ -58,6 +75,7 @@ const setPromptForm = (data) => promptForm.value = data;
         :user-behavior="userBehavior"
         :local-messages="localMessages"
         :chat-loading="chatLoading"
+        :system-define="systemDefine"
         @add-message="addMessage"
         @set-chat-loading="setChatLoading"
         @save-message="saveMessage"
@@ -65,6 +83,7 @@ const setPromptForm = (data) => promptForm.value = data;
         @toggle-user-behavior="toggleUserBehavior"
         @replace-messages="replaceMessages"
         @set-prompt-form="setPromptForm"
+        @set-system-define="setSystemDefine"
       />
     </div>
   </div>

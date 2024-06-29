@@ -13,3 +13,10 @@ export const checkModelPermissionAPI = (model) => new Promise((resolve, reject) 
       (err) => reject(err),
   );
 });
+
+export const listSystemPresetAPI = () => new Promise((resolve, reject) => {
+  http.get('/system_presets/').then(
+      (res) => resolve(res),
+      (err) => reject(err),
+  );
+});
