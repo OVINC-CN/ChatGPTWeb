@@ -94,7 +94,7 @@ onUnmounted(() => {
   <div
     class="chat-display"
     style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center"
-    v-show="localMessages.length === 0"
+    v-show="localMessages.length === 0 && !systemDefine"
   >
     <div style="width: 60px; height: 60px">
       <img
