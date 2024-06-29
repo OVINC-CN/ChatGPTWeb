@@ -28,6 +28,7 @@ const mZhCN = {
   Reset: '重置',
   Save: '保存',
   PleaseChoosePreset: '请选择预设',
+  Remove: '移除',
 };
 
 export default mZhCN;

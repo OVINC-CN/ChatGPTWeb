@@ -28,6 +28,7 @@ const mEnUS = {
   Reset: 'Reset',
   Save: 'Save',
   PleaseChoosePreset: 'Please choose one preset',
+  Remove: 'Remove',
 };
 
 export default mEnUS;
