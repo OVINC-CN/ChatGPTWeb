@@ -17,6 +17,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  chatLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const store = useStore();
@@ -46,15 +50,23 @@ const emits = defineEmits(['reGenerate']);
     <div
       class="message-content-content"
       :style="{
-        background: message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
+        background: message.role === Role.System ? 'rgb(var(--orange-1)' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
         textAlign: 'left'
       }"
     >
+      <div
+        v-if="message.role === Role.System"
+        style="margin-bottom: 10px"
+      >
+        <icon-bulb />
+        {{ $t('SystemDefine') }}
+      </div>
       <v-md-preview
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
       />
+
       <a-link
         v-if="message.file"
         :href="message.file"
@@ -68,7 +80,7 @@ const emits = defineEmits(['reGenerate']);
           {{ message.file.split('/').slice(-1)[0] }}
         </a-space>
       </a-link>
-      <icon-loading v-show="!message.content" />
+      <icon-loading v-show="!message.content && chatLoading" />
     </div>
     <a-avatar
       v-show="false"
@@ -79,7 +91,7 @@ const emits = defineEmits(['reGenerate']);
     </a-avatar>
     <icon-refresh
       @click="emits('reGenerate')"
-      v-if="isLast && message.role === Role.Assistant"
+      v-if="isLast && !chatLoading && message.role === Role.Assistant"
       class="message-content-content-icon-refresh"
     />
   </div>

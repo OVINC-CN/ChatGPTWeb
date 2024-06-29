@@ -21,6 +21,14 @@ const mEnUS = {
   ReUploadFile: 'Re-Upload',
   ExtractFileFailed: 'Extract file failed, please try again',
   RemoveFile: 'Remove',
+  ChooseModel: 'Model',
+  ToBottom: 'Bottom',
+  SystemDefine: 'Preset',
+  RemoveDefine: 'Remove Preset',
+  Reset: 'Reset',
+  Save: 'Save',
+  PleaseChoosePreset: 'Please choose one preset',
+  Remove: 'Remove',
 };
 
 export default mEnUS;

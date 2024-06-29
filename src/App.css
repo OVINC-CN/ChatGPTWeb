@@ -16,6 +16,10 @@ html, body, #app {
     height: 100vh;
 }
 
+html {
+    overflow: hidden;
+}
+
 .arco-icon {
     font-size: 18px;
 }
@@ -35,6 +39,10 @@ html, body, #app {
 
 .arco-btn-icon {
     line-height: 0
+}
+
+.arco-modal {
+    max-width: calc(100vw - 40px);
 }
 
 *::-webkit-scrollbar {

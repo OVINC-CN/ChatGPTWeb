@@ -9,6 +9,8 @@ import globalContext from '../context';
 import {checkTCaptcha} from '@/utils/tcaptcha';
 import {extractFileAPI, extractFileStatusAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
 import {loadCOSClient} from '@/utils/cos';
+import {IconFile, IconDelete} from '@arco-design/web-vue/es/icon';
+import {listSystemPresetAPI} from '@/api/model';
 
 // props
 const props = defineProps({
@@ -24,10 +26,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  systemDefine: {
+    type: String,
+    default: '',
+  },
 });
 
 // emits
-const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior', 'replaceMessages', 'setPromptForm']);
+const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior', 'replaceMessages', 'setPromptForm', 'setSystemDefine']);
 
 // i18n
 const i18n = useI18n();
@@ -97,6 +103,10 @@ const doChat = async () => {
     messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file}],
     model: model.value,
   };
+  // system define
+  if (props.systemDefine) {
+    params.messages.unshift({role: 'system', content: props.systemDefine});
+  }
   // call api
   let key = '';
   await preCheckAPI(params)
@@ -285,14 +295,47 @@ const checkExtractStatus = (filePath) => {
   }, 2000);
 };
 
+// models
+const models = computed(() => store.state.models);
+const setModel = (model) => {
+  localStorage.setItem(localModelKey.value, model);
+  store.commit('setCurrentModel', model);
+};
+
+// preset
+const presetVisible = ref(false);
+const changePreset = () => presetVisible.value = true;
+const setSystemDefine = (define) => emits('setSystemDefine', define);
+const systemPresets = ref([]);
+const loadSystemPresets = () => {
+  listSystemPresetAPI().then(
+      (res) => systemPresets.value = res.data,
+  );
+};
+const customSystemDefine = ref('');
+watch(() => props.systemDefine, () => customSystemDefine.value = props.systemDefine);
+onMounted(() => loadSystemPresets());
+const doSubmitPreset = () => {
+  presetVisible.value = false;
+  setSystemDefine(customSystemDefine.value);
+};
+const resetSubmitPreset = () => {
+  customSystemDefine.value = '';
+  doSubmitPreset();
+};
+const doSelectSystemPreset = (id) => {
+  systemPresets.value.forEach((item) => {
+    if (item.id === id) {
+      customSystemDefine.value = item.content;
+    }
+  });
+};
+
 defineExpose({reGenerate, promptForm});
 </script>
 
 <template>
-  <div
-    id="chat-input"
-    :style="{height: showEditBox ? '214px' : '32px'}"
-  >
+  <div id="chat-input">
     <input
       ref="fileUploadInput"
       style="display: none"
@@ -304,72 +347,194 @@ defineExpose({reGenerate, promptForm});
       @submit="doChat"
     >
       <a-form-item
-        field="content"
         hide-label
-        v-show="showEditBox"
-      >
-        <a-textarea
-          v-model="promptForm.content"
-          :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
-          :auto-size="{minRows: 6, maxRows: 6}"
-          :disabled="chatLoading"
-          @keydown="onKeydown"
-          @input="emits('toggleUserBehavior', false); emits('setPromptForm', promptForm)"
-          @focus="emits('toggleUserBehavior', false)"
-        />
-      </a-form-item>
-      <a-form-item
-        hide-label
-        style="margin-bottom: 0;"
         id="chat-input-submit-button"
       >
         <a-space style="display: flex; width: 100%; justify-content: space-between;">
           <a-space>
-            <a-button
-              shape="circle"
-              @click="showEditBox = !showEditBox"
+            <a-tooltip
+              v-if="userBehavior && chatLoading"
+              :background-color="'var(--color-fill-1)'"
             >
-              <icon-layers />
-            </a-button>
-            <a-button
-              shape="circle"
-              @click="emits('toggleUserBehavior', false)"
-              v-show="userBehavior"
+              <template #content>
+                <span style="color: var(--color-text-2)">
+                  {{ $t('ToBottom') }}
+                </span>
+              </template>
+              <a-button
+                @click="emits('toggleUserBehavior', false)"
+                class="chat-input-left-button"
+              >
+                <icon-arrow-down />
+              </a-button>
+            </a-tooltip>
+            <a-dropdown @select="setModel">
+              <a-button
+                :disabled="chatLoading"
+                class="chat-input-left-button"
+              >
+                <icon-robot />
+              </a-button>
+              <template #content>
+                <a-doption
+                  v-for="item in models"
+                  :key="item.id"
+                  :value="item.id"
+                >
+                  {{ item.name }}
+                </a-doption>
+              </template>
+            </a-dropdown>
+            <a-tooltip
+              :background-color="'var(--color-fill-1)'"
+              v-if="showEditBox"
             >
-              <icon-arrow-down />
-            </a-button>
+              <template #content>
+                <span style="color: var(--color-text-2)">
+                  {{ $t('SystemDefine') }}
+                </span>
+              </template>
+              <a-button
+                :disabled="chatLoading"
+                @click="changePreset"
+                class="chat-input-left-button"
+                :type="props.systemDefine ? 'primary': undefined"
+                :status="props.systemDefine ? 'warning' : undefined"
+              >
+                <icon-bulb />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip
+              :background-color="'var(--color-fill-1)'"
+              v-if="uploadEnabled && showEditBox"
+            >
+              <template #content>
+                <span style="color: var(--color-text-2)">
+                  {{ promptForm.file ? $t('RemoveFile') : $t('UploadFile') }}
+                </span>
+              </template>
+              <a-button
+                :disabled="chatLoading"
+                @click="customUpload"
+                :type="promptForm.file ? 'primary': undefined"
+                :status="promptForm.file ? 'warning' : undefined"
+                class="chat-input-left-button"
+              >
+                <icon-file />
+              </a-button>
+            </a-tooltip>
+            <a-tooltip
+              :background-color="'var(--color-fill-1)'"
+              v-if="showEditBox"
+            >
+              <template #content>
+                <span style="color: var(--color-text-2)">
+                  {{ $t('ClearMessage') }}
+                </span>
+              </template>
+              <a-button
+                :disabled="chatLoading"
+                @click="emits('clearMessages')"
+                class="chat-input-left-button"
+              >
+                <icon-delete />
+              </a-button>
+            </a-tooltip>
           </a-space>
           <a-space>
-            <a-button
-              :loading="chatLoading"
-              @click="emits('clearMessages')"
-              v-show="showEditBox"
+            <a-tooltip
+              :background-color="'var(--color-fill-1)'"
+              v-if="showEditBox"
             >
-              {{ $t('ClearMessage') }}
-            </a-button>
-            <a-button
-              v-if="uploadEnabled"
-              v-show="showEditBox"
-              :loading="chatLoading"
-              @click="customUpload"
-              type="primary"
-              :status="promptForm.file ? 'warning' : 'success'"
-            >
-              {{ promptForm.file ? $t('RemoveFile') : $t('UploadFile') }}
-            </a-button>
-            <a-button
-              type="primary"
-              html-type="submit"
-              :loading="chatLoading"
-              :disabled="promptForm.content.length <= 0 || !model"
-              v-show="showEditBox"
-            >
-              {{ $t('SendMessage') }}
-            </a-button>
+              <template #content>
+                <span style="color: var(--color-text-2)">
+                  {{ $t('SendMessage') }}
+                </span>
+              </template>
+              <a-button
+                type="primary"
+                html-type="submit"
+                :disabled="promptForm.content.length <= 0 || !model || chatLoading"
+              >
+                <icon-send />
+              </a-button>
+            </a-tooltip>
           </a-space>
         </a-space>
       </a-form-item>
+      <a-form-item
+        field="content"
+        hide-label
+        style="margin-bottom: 0;"
+        v-show="showEditBox"
+      >
+        <a-spin
+          dot
+          style="width: 100%"
+          :loading="chatLoading"
+        >
+          <a-textarea
+            v-model="promptForm.content"
+            :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
+            :auto-size="{minRows: 3, maxRows: 10}"
+            :disabled="chatLoading"
+            @keydown="onKeydown"
+            @input="emits('toggleUserBehavior', false); emits('setPromptForm', promptForm)"
+            @focus="emits('toggleUserBehavior', false)"
+          />
+        </a-spin>
+      </a-form-item>
     </a-form>
+    <a-modal
+      v-model:visible="presetVisible"
+      :footer="false"
+      @cancel="presetVisible = false"
+    >
+      <template #title>
+        <div style="text-align: left; width: 100%">
+          {{ $t('SystemDefine') }}
+        </div>
+      </template>
+      <a-space
+        id="chat-input-system-define-content"
+        direction="vertical"
+      >
+        <a-select
+          v-if="systemPresets.length > 0"
+          id="chat-input-system-define-content-tag"
+          @change="doSelectSystemPreset"
+          :placeholder="$t('PleaseChoosePreset')"
+        >
+          <a-option
+            v-for="item in systemPresets"
+            :key="item.id"
+            :value="item.id"
+            :label="item.name"
+          />
+        </a-select>
+        <a-textarea
+          v-model="customSystemDefine"
+          :auto-size="{minRows: 3, maxRows: 10}"
+          :placeholder="$t('SystemDefine')"
+        />
+        <a-space style="width: 100%; display: flex; justify-content: flex-end">
+          <a-button
+            v-if="customSystemDefine"
+            type="primary"
+            status="warning"
+            @click="resetSubmitPreset"
+          >
+            {{ $t('Remove') }}
+          </a-button>
+          <a-button
+            type="primary"
+            @click="doSubmitPreset"
+          >
+            {{ $t('Save') }}
+          </a-button>
+        </a-space>
+      </a-space>
+    </a-modal>
   </div>
 </template>
 
@@ -390,5 +555,18 @@ defineExpose({reGenerate, promptForm});
 
 #chat-input :deep(.arco-textarea-wrapper:hover) {
   background: var(--color-fill-2);
+}
+
+.chat-input-left-button {
+  padding: 6px;
+}
+
+#chat-input-system-define-content,
+#chat-input-system-define-content > :deep(.arco-space-item) {
+  width: 100%;
+}
+
+#chat-input-system-define-content-tag {
+  width: 100%;
 }
 </style>

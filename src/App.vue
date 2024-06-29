@@ -10,94 +10,66 @@
         :style="{maxWidth: fullScreen ? '100%' : '1600px'}"
       >
         <a-layout-header id="app-header">
-          <div>
-            <a-menu
-              mode="horizontal"
-              :default-selected-keys="[currentMenuItem]"
-              @menu-item-click="goTo"
-            >
-              <a-menu-item
-                disabled
-                id="app-menu-logo"
-              >
-                <div
-                  @click="goTo('Chat')"
-                  style="cursor: pointer"
-                >
-                  ChatGPT
-                </div>
-              </a-menu-item>
-              <a-menu-item
-                v-for="item in menu"
-                :key="item.key"
-              >
-                {{ item.name }}
-              </a-menu-item>
-            </a-menu>
-            <a-space id="app-header-right">
-              <icon-fullscreen-exit
-                v-if="fullScreen"
-                style="font-weight: bold; margin-right: 10px; cursor: pointer"
-                @click="toggleFullScreen"
-              />
-              <icon-fullscreen
-                v-else
-                style="font-weight: bold; margin-right: 10px; cursor: pointer"
-                @click="toggleFullScreen"
-              />
-              <a-dropdown @select="setModel">
-                <icon-settings style="font-weight: bold; margin-right: 10px; cursor: pointer" />
-                <template #content>
-                  <a-doption
-                    v-for="item in models"
-                    :key="item.id"
-                    :value="item.id"
-                  >
-                    {{ item.name }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-              <a-dropdown @select="changeLangAndReload">
-                <icon-public id="app-header-menu-lang" />
-                <template #content>
-                  <a-doption
-                    v-for="item in langOption"
-                    :key="item.value"
-                    :value="item.value"
-                  >
-                    {{ item.name }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-              <a-dropdown
-                @select="handlerUserDropDown"
-              >
-                <a-button
-                  type="text"
-                  style="padding: 0; color: unset"
-                >
-                  <a-badge
-                    status="success"
-                    dot
-                    :count="1"
-                    v-if="user.username"
-                  >
-                    <icon-user />
-                  </a-badge>
-                  <icon-user v-else />
-                </a-button>
-                <template #content>
-                  <a-doption
-                    v-for="item in userDropDown"
-                    :key="item.value"
-                    :value="item.value"
-                  >
-                    {{ item.name }}
-                  </a-doption>
-                </template>
-              </a-dropdown>
-            </a-space>
+          <div
+            id="app-menu-logo"
+            style="cursor: pointer"
+            @click="goTo('Chat')"
+          >
+            <div>
+              ChatGPT
+            </div>
           </div>
+          <a-space id="app-header-right">
+            <icon-fullscreen-exit
+              v-if="fullScreen"
+              style="font-weight: bold; margin-right: 10px; cursor: pointer"
+              @click="toggleFullScreen"
+            />
+            <icon-fullscreen
+              v-else
+              style="font-weight: bold; margin-right: 10px; cursor: pointer"
+              @click="toggleFullScreen"
+            />
+            <a-dropdown @select="changeLangAndReload">
+              <icon-public id="app-header-menu-lang" />
+              <template #content>
+                <a-doption
+                  v-for="item in langOption"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  {{ item.name }}
+                </a-doption>
+              </template>
+            </a-dropdown>
+            <a-dropdown
+              @select="handlerUserDropDown"
+            >
+              <a-button
+                type="text"
+                style="padding: 0; color: unset"
+              >
+                <a-badge
+                  status="success"
+                  dot
+                  :count="1"
+                  v-if="user.username"
+                >
+                  <icon-user />
+                </a-badge>
+                <icon-user v-else />
+              </a-button>
+              <template #content>
+                <a-doption
+                  v-for="item in userDropDown"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  {{ item.name }}
+                </a-doption>
+              </template>
+            </a-dropdown>
+          </a-space>
         </a-layout-header>
         <a-layout-content>
           <router-view v-slot="{ Component }">
@@ -185,14 +157,6 @@ const handlerUserDropDown = (key) => {
   }
 };
 
-// models
-const models = computed(() => store.state.models);
-const localModelKey = ref('local-model');
-const setModel = (model) => {
-  localStorage.setItem(localModelKey.value, model);
-  store.commit('setCurrentModel', model);
-};
-
 // aegis
 const initRUM = () => {
   getRUMConfigAPI()
@@ -224,6 +188,8 @@ onMounted(() => initRUM());
 #app-header {
   margin-bottom: 20px;
   border-bottom: 1px solid var(--color-border-1);
+  display: flex;
+  justify-content: space-between;
 }
 
 #app-header > div {
@@ -248,15 +214,22 @@ onMounted(() => initRUM());
 }
 
 #app-menu-logo > div {
-  width: 100px;
-  height: 30px;
   border-radius: var(--border-radius-medium);
   background: var(--color-fill-3);
-  padding: 4px;
   cursor: text;
   color: var(--color-text-1);
   text-align: center;
   font-weight: bold;
+  height: 30px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app-menu-logo {
+  padding: 14px 0 14px 20px;
+  margin-right: 20px;
 }
 
 #app-footer {
