@@ -111,6 +111,6 @@ const setPromptForm = (data) => promptForm.value = data;
   width: 100%;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 160px);
+  max-height: calc(100 * var(--vh) - 160px);
 }
 </style>

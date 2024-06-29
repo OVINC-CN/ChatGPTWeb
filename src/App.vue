@@ -181,7 +181,7 @@ onMounted(() => initRUM());
 }
 
 #app-layout {
-  height: 100vh;
+  height: calc(100 * var(--vh));
   width: 100vw;
 }
 

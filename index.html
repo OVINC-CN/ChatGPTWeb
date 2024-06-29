@@ -7,6 +7,22 @@
         <title>ChatGPT | OVINC</title>
         <script src="/extra-assets/js/cos-js-sdk-v5.min.js?v=20240306083000"></script>
         <script src="https://turing.captcha.qcloud.com/TCaptcha.js?v=20240420185400"></script>
+        <style>
+            :root {
+                --vh: 1vh;
+            }
+        </style>
+        <script>
+          !(function (n, e) {
+            function setViewHeight() {
+              const windowVH = e.innerHeight / 100
+              n.documentElement.style.setProperty('--vh', windowVH + 'px')
+            }
+            const i = 'orientationchange' in window ? 'orientationchange' : 'resize'
+            n.addEventListener('DOMContentLoaded', setViewHeight)
+            e.addEventListener(i, setViewHeight)
+          })(document, window)
+        </script>
     </head>
     <body>
         <div id="app"></div>
