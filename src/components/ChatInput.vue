@@ -430,6 +430,8 @@ defineExpose({reGenerate, promptForm});
             >
               <icon-file />
             </a-button>
+          </a-space>
+          <a-space>
             <a-button
               v-if="showEditBox"
               :disabled="chatLoading"
@@ -438,8 +440,6 @@ defineExpose({reGenerate, promptForm});
             >
               <icon-delete />
             </a-button>
-          </a-space>
-          <a-space>
             <a-button
               v-if="showEditBox"
               :disabled="chatLoading"
