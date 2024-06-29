@@ -29,6 +29,7 @@ const mZhCN = {
   Save: '保存',
   PleaseChoosePreset: '请选择预设',
   Remove: '移除',
+  ModelIgnoreSystemDefineTips: '部分模型可能会忽略预设，如果输出不符合预期，请切换模型',
 };
 
 export default mZhCN;

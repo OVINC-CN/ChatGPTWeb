@@ -29,6 +29,7 @@ const mEnUS = {
   Save: 'Save',
   PleaseChoosePreset: 'Please choose one preset',
   Remove: 'Remove',
+  ModelIgnoreSystemDefineTips: 'Some models may ignore presets, if the output does not meet expectations, try switching models.',
 };
 
 export default mEnUS;

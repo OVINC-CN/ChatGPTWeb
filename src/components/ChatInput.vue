@@ -504,6 +504,7 @@ defineExpose({reGenerate, promptForm});
           id="chat-input-system-define-content-tag"
           @change="doSelectSystemPreset"
           :placeholder="$t('PleaseChoosePreset')"
+          :allow-search="true"
         >
           <a-option
             v-for="item in systemPresets"
@@ -517,6 +518,9 @@ defineExpose({reGenerate, promptForm});
           :auto-size="{minRows: 3, maxRows: 10}"
           :placeholder="$t('SystemDefine')"
         />
+        <div class="model-ignore-system-tips">
+          {{ $t('ModelIgnoreSystemDefineTips') }}
+        </div>
         <a-space style="width: 100%; display: flex; justify-content: flex-end">
           <a-button
             v-if="customSystemDefine"
@@ -568,5 +572,10 @@ defineExpose({reGenerate, promptForm});
 
 #chat-input-system-define-content-tag {
   width: 100%;
+}
+
+.model-ignore-system-tips {
+  color: var(--color-neutral-6);
+  font-size: 12px;
 }
 </style>
