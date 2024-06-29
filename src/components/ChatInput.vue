@@ -497,17 +497,28 @@ defineExpose({reGenerate, promptForm});
           {{ $t('MaxMessagesCount') }}
         </div>
       </template>
-      <a-slider
-        v-model:model-value="maxMessage"
-        :default-value="maxMessage"
-        :style="{ width: '100%' }"
-        :step="2"
-        :min="messageLength[0]"
-        :max="messageLength[1]"
-      />
-      <div class="model-context-tips">
-        {{ $t('ModelContextLengthTips') }}
-      </div>
+      <a-space
+        direction="vertical"
+      >
+        <a-input-number
+          v-model="maxMessage"
+          :mode="'button'"
+          :style="{ width: '100%' }"
+          :step="2"
+          :min="messageLength[0]"
+          :max="messageLength[1]"
+        />
+        <a-slider
+          v-model:model-value="maxMessage"
+          :style="{ width: '100%' }"
+          :step="2"
+          :min="messageLength[0]"
+          :max="messageLength[1]"
+        />
+        <div class="model-context-tips">
+          {{ $t('ModelContextLengthTips') }}
+        </div>
+      </a-space>
     </a-modal>
     <a-modal
       v-model:visible="presetVisible"
