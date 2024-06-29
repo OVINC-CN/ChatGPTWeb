@@ -42,7 +42,6 @@ onMounted(() => {
     try {
       setSystemDefine(JSON.parse(value));
     } catch (e) {
-      console.log(e);
       setSystemDefine('');
     }
   } else {

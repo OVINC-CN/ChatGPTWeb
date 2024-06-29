@@ -103,6 +103,8 @@ const doChat = async () => {
     messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file}],
     model: model.value,
   };
+  // max message length control
+  params.messages = params.messages.slice(-(maxMessage.value + 1));
   // system define
   if (props.systemDefine) {
     params.messages.unshift({role: 'system', content: props.systemDefine});
@@ -330,6 +332,34 @@ const doSelectSystemPreset = (id) => {
     }
   });
 };
+const chosenPreset = ref('');
+watch(() => presetVisible.value, () => {
+  if (!presetVisible.value) {
+    presetVisible.value = false;
+    chosenPreset.value = '';
+  }
+});
+
+// message length
+const maxMessageVisible = ref(false);
+const messageLength = ref([0, 32]);
+const maxMessage = ref(10);
+watch(() => maxMessage.value, () => {
+  if (maxMessage.value % 2 !== 0) {
+    maxMessage.value++;
+  }
+  localStorage.setItem(localMaxMessageKey.value, JSON.stringify(maxMessage.value));
+});
+const showMaxMessage = () => maxMessageVisible.value = true;
+const localMaxMessageKey = ref('local-max-message');
+onMounted(() => {
+  const value = localStorage.getItem(localMaxMessageKey.value);
+  if (value) {
+    try {
+      maxMessage.value = JSON.parse(value);
+    } catch (_) {}
+  }
+});
 
 defineExpose({reGenerate, promptForm});
 </script>
@@ -412,6 +442,19 @@ defineExpose({reGenerate, promptForm});
           <a-space>
             <a-button
               v-if="showEditBox"
+              :disabled="chatLoading"
+              @click="showMaxMessage"
+              class="chat-input-left-button"
+            >
+              <a-space :size="2">
+                <icon-history />
+                <span>
+                  {{ maxMessage }}
+                </span>
+              </a-space>
+            </a-button>
+            <a-button
+              v-if="showEditBox"
               type="primary"
               html-type="submit"
               :disabled="promptForm.content.length <= 0 || !model || chatLoading"
@@ -445,10 +488,31 @@ defineExpose({reGenerate, promptForm});
       </a-form-item>
     </a-form>
     <a-modal
+      v-model:visible="maxMessageVisible"
+      :footer="false"
+      :esc-to-close="true"
+    >
+      <template #title>
+        <div style="text-align: left; width: 100%">
+          {{ $t('MaxMessagesCount') }}
+        </div>
+      </template>
+      <a-slider
+        v-model:model-value="maxMessage"
+        :default-value="maxMessage"
+        :style="{ width: '100%' }"
+        :step="2"
+        :min="messageLength[0]"
+        :max="messageLength[1]"
+      />
+      <div class="model-context-tips">
+        {{ $t('ModelContextLengthTips') }}
+      </div>
+    </a-modal>
+    <a-modal
       v-model:visible="presetVisible"
       :footer="false"
       :esc-to-close="true"
-      @cancel="presetVisible = false"
     >
       <template #title>
         <div style="text-align: left; width: 100%">
@@ -465,6 +529,7 @@ defineExpose({reGenerate, promptForm});
           @change="doSelectSystemPreset"
           :placeholder="$t('PleaseChoosePreset')"
           :allow-search="true"
+          v-model="chosenPreset"
         >
           <a-option
             v-for="item in systemPresets"
@@ -534,7 +599,8 @@ defineExpose({reGenerate, promptForm});
   width: 100%;
 }
 
-.model-ignore-system-tips {
+.model-ignore-system-tips,
+.model-context-tips {
   color: var(--color-neutral-6);
   font-size: 12px;
 }

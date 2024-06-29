@@ -30,6 +30,8 @@ const mZhCN = {
   PleaseChoosePreset: '请选择预设',
   Remove: '移除',
   ModelIgnoreSystemDefineTips: '部分模型可能会忽略预设，如果输出不符合预期，请切换模型',
+  MaxMessagesCount: '对话上下文数量',
+  ModelContextLengthTips: '上下文是指对话中的历史消息和相关信息。通过携带上下文，模型可以更好地理解用户的意图，并对回复内容进行调整',
 };
 
 export default mZhCN;
