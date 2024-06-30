@@ -392,6 +392,7 @@ const resetTool = () => {
   toolVisible.value = false;
   currentTool.value = '';
   currentToolDesc.value = '';
+  doSubmitTool();
 };
 const localToolKey = ref('local-tool');
 onMounted(() => {
@@ -463,7 +464,7 @@ defineExpose({reGenerate, promptForm});
               <icon-bulb />
             </a-button>
             <a-button
-              v-if="showEditBox && tools.length > 0"
+              v-if="showEditBox && (tools.length > 0 || currentTool)"
               :disabled="chatLoading"
               @click="changeTool"
               class="chat-input-left-button"
