@@ -382,7 +382,7 @@ const currentToolDesc = computed(() => {
   });
   return val ? val : '';
 });
-const toolVisible = ref(true);
+const toolVisible = ref(false);
 const changeTool = () => toolVisible.value = true;
 const doSubmitTool = () => {
   toolVisible.value = false;
