@@ -80,7 +80,7 @@ const emits = defineEmits(['reGenerate']);
           {{ message.file.split('/').slice(-1)[0] }}
         </a-space>
       </a-link>
-      <icon-loading v-show="!message.content && chatLoading" />
+      <icon-loading v-show="isLast && chatLoading" />
     </div>
     <a-avatar
       v-show="false"
