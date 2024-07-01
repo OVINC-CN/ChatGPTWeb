@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import {computed, onBeforeUnmount, onMounted, onUnmounted, ref, watch} from 'vue';
 import {preCheckAPI} from '@/api/chat';
 import {Message} from '@arco-design/web-vue';
 import {Role} from '@/constants';
@@ -241,6 +241,9 @@ const customUpload = () => {
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   fileUploadInput.value.value = null;
+  doUploadFile(file);
+};
+const doUploadFile = (file) => {
   emits('setChatLoading', true);
   checkTCaptcha((ret) => {
     getCOSUploadTempKeyAPI(file.name, 'file-extract', ret).then(
@@ -404,6 +407,22 @@ onMounted(() => {
   }
 });
 
+// paste
+const handlePaste = (e) => {
+  const items = e.clipboardData.items;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.kind === 'file') {
+      const file = item.getAsFile();
+      if (file.type.indexOf('image/') !== -1 || file.type==='application/pdf') {
+        doUploadFile(file);
+      }
+    }
+  }
+};
+onMounted(() => window.addEventListener('paste', handlePaste));
+onUnmounted(() => window.removeEventListener('paste', handlePaste));
+
 defineExpose({reGenerate, promptForm});
 </script>
 
@@ -413,6 +432,7 @@ defineExpose({reGenerate, promptForm});
       ref="fileUploadInput"
       style="display: none"
       type="file"
+      accept="image/*, application/pdf"
       @change="handleFileChange"
     >
     <a-form
