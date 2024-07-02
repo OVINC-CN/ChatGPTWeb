@@ -121,6 +121,7 @@
                 <a-space :size="4">
                   <span>{{ $t('Balance') }}</span>
                   <a-button
+                    v-if="walletConfig.is_enabled"
                     @click="showCharge"
                     type="text"
                     status="success"
