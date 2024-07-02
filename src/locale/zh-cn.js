@@ -35,6 +35,22 @@ const mZhCN = {
   Tools: '插件',
   ToolUseTips: '部分模型不支持插件，如果输出不符合预期，请切换模型',
   PleaseChooseTool: '请选择插件',
+  UserInfo: '用户信息',
+  Username: '用户名',
+  Balance: '余额',
+  ModelName: '模型',
+  PromptTokens: '提示令牌数',
+  CompletionTokens: '响应令牌数',
+  Price: '计费',
+  RequestTime: '请求时间',
+  ChatHistory: '历史计费',
+  Charge: '充值',
+  Refresh: '刷新',
+  Amount: '金额',
+  Cancel: '取消',
+  WeChatScan: '微信扫码',
+  FinishCharge: '完成支付',
+  Tokens: '令牌数',
 };
 
 export default mZhCN;
