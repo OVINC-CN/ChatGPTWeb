@@ -158,7 +158,6 @@
           @page-size-change="handlerPageSizeChange"
           page-position="bottom"
           :virtual-list-props="{height: tableHeight}"
-          :column-resizable="true"
         >
           <template #created_at="{ record }">
             <div style="word-break: break-word">
@@ -166,7 +165,7 @@
             </div>
           </template>
           <template #model_name="{ record }">
-            <div>
+            <div style="word-break: break-word">
               {{ record.model_name }}
             </div>
           </template>
@@ -174,7 +173,14 @@
             {{ record.prompt_tokens + record.completion_tokens }}
           </template>
           <template #price="{ record }">
-            {{ record.prompt_tokens * record.prompt_token_unit_price / 1000 + record.completion_tokens * record.completion_token_unit_price / 1000 }}
+            {{
+              (
+                (
+                  record.prompt_tokens * record.prompt_token_unit_price / 1000
+                  + record.completion_tokens * record.completion_token_unit_price / 1000
+                )
+              ).toFixed(4)
+            }}
           </template>
         </a-table>
       </div>
