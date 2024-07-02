@@ -401,6 +401,8 @@ const chatLogPage = ref({
   current: 1,
   pageSize: 20,
   total: 0,
+  simple: true,
+  showTotal: true,
 });
 const loadChatLog = () => {
   handleLoading(logLoading, true);
