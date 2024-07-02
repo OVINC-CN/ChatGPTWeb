@@ -122,6 +122,9 @@ const doChat = async () => {
       }, (err) => {
         emits('setChatLoading', false);
         Message.error(err.response.data.message);
+        if (err.response.status === 403) {
+          store.commit('setUserInfoVisible', true);
+        }
       });
   if (!key) {
     return;

@@ -72,11 +72,12 @@
       </a-layout>
     </a-spin>
     <a-modal
-      v-model:visible="userInfoVisible"
+      :visible="userInfoVisible"
       :footer="false"
       :esc-to-close="true"
       modal-class="user-info-modal"
       :unmount-on-close="true"
+      @cancel="hideUserInfo"
     >
       <template #title>
         <div style="width: 100%; text-align: left">
@@ -90,7 +91,18 @@
         >
           <div class="arco-statistic">
             <div class="arco-statistic-title">
-              {{ $t('Username') }}
+              <a-space :size="4">
+                <div>
+                  {{ $t('Username') }}
+                </div>
+                <a-button
+                  type="text"
+                  style="margin: 0; padding: 0"
+                  @click="doLogout"
+                >
+                  {{ $t('Logout') }}
+                </a-button>
+              </a-space>
             </div>
             <div class="arco-statistic-content">
               <div class="arco-statistic-value">
@@ -247,12 +259,12 @@ import {locale, langOption, changeLangAndReload} from './locale';
 import {useI18n} from 'vue-i18n';
 import {useRoute, useRouter} from 'vue-router';
 import Aegis from 'aegis-web-sdk';
-import {signOutAPI} from './api/user';
 import {getRUMConfigAPI} from './api/trace';
 import {getMyWalletAPI, getPreChargeAPI, getWalletConfigAPI} from '@/api/wallet';
 import {getChatLogs} from '@/api/chat';
 import {handleLoading} from '@/utils/loading';
 import {Message} from '@arco-design/web-vue';
+import {signOutAPI} from '@/api/user';
 
 // display
 const fullScreen = ref(true);
@@ -298,10 +310,19 @@ onMounted(() => {
 
 // user
 const user = computed(() => store.state.user);
-const userInfoVisible = ref(false);
+const userInfoVisible = computed(() => store.state.userInfoVisible);
 const showUserInfo = () => {
-  userInfoVisible.value = true;
   chargeVisible.value = false;
+  store.commit('setUserInfoVisible', true);
+};
+const hideUserInfo = () => {
+  store.commit('setUserInfoVisible', false);
+};
+const doLogout = () => {
+  signOutAPI().then(
+      () => window.location.reload(),
+      (err) => Message.error(err.response.data.message),
+  );
 };
 
 // wallet
@@ -309,8 +330,8 @@ const walletBalance = ref(0);
 const loadWalletBalance = () => {
   getMyWalletAPI().then((res) => walletBalance.value = res.data.balance);
 };
-watch(() => userInfoVisible.value, () => {
-  if (userInfoVisible.value) {
+watch(() => store.state.userInfoVisible, () => {
+  if (store.state.userInfoVisible) {
     loadWalletBalance();
   }
 });
@@ -324,7 +345,7 @@ const loadWalletConfig = () => {
 onMounted(() => loadWalletConfig());
 const chargeVisible = ref(false);
 const showCharge = () => {
-  userInfoVisible.value = false;
+  hideUserInfo();
   chargeVisible.value = true;
 };
 const chargeLoading = ref(false);
@@ -393,8 +414,8 @@ const handlerPageSizeChange = (size) => {
   chatLogPage.value.pageSize = size;
   loadChatLog();
 };
-watch(() => userInfoVisible.value, () => {
-  if (userInfoVisible.value) {
+watch(() => store.state.userInfoVisible, () => {
+  if (store.state.userInfoVisible) {
     handlePageChange(1);
   }
 });

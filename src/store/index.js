@@ -1,7 +1,6 @@
 import {createStore} from 'vuex';
-import {getUserInfoAPI} from '../api/user';
-import {listModelsAPI} from '../api/model';
-import router from '../router';
+import {getUserInfoAPI} from '@/api/user';
+import {listModelsAPI} from '@/api/model';
 
 const store = createStore({
   state() {
@@ -14,6 +13,7 @@ const store = createStore({
         last_login: '',
         user_type: '',
       },
+      userInfoVisible: false,
       userProperties: {
         avatar: null,
         phone_number: null,
@@ -25,6 +25,9 @@ const store = createStore({
     };
   },
   mutations: {
+    setUserInfoVisible(state, payload) {
+      state.userInfoVisible = payload;
+    },
     setMainLoading(state, payload) {
       state.mainLoading = payload;
     },
@@ -42,9 +45,6 @@ const store = createStore({
     },
     setModels(state, payload) {
       state.models = payload;
-      if (!payload.length) {
-        router.push({name: 'PermissionDenied'});
-      }
     },
     setCurrentModel(state, payload) {
       state.currentModel = payload;
