@@ -174,7 +174,7 @@
             {{ record.prompt_tokens + record.completion_tokens }}
           </template>
           <template #price="{ record }">
-            {{ record.prompt_tokens * record.prompt_token_unit_price + record.completion_tokens * record.completion_token_unit_price }}
+            {{ record.prompt_tokens * record.prompt_token_unit_price / 1000 + record.completion_tokens * record.completion_token_unit_price / 1000 }}
           </template>
         </a-table>
       </div>
