@@ -170,17 +170,41 @@
             </div>
           </template>
           <template #tokens="{ record }">
-            {{ record.prompt_tokens + record.completion_tokens }}
+            <a-tooltip background-color="var(--color-bg-1)">
+              <a-button
+                type="text"
+                style="color: unset; padding: 0; margin: 0"
+              >
+                {{ record.prompt_tokens + record.completion_tokens }}
+              </a-button>
+              <template #content>
+                <div style="color: var(--color-neutral-10)">
+                  <div>{{ $t('PromptTokens') }}:&nbsp;{{ record.prompt_tokens }}</div>
+                  <div>{{ $t('CompletionTokens') }}:&nbsp;{{ record.completion_tokens }}</div>
+                </div>
+              </template>
+            </a-tooltip>
           </template>
           <template #price="{ record }">
-            {{
-              (
-                (
-                  record.prompt_tokens * record.prompt_token_unit_price / 1000
-                  + record.completion_tokens * record.completion_token_unit_price / 1000
-                )
-              ).toFixed(4)
-            }}
+            <a-tooltip background-color="var(--color-bg-1)">
+              <a-button
+                type="text"
+                style="color: unset; padding: 0; margin: 0"
+              >
+                {{
+                  (
+                    record.prompt_tokens * record.prompt_token_unit_price / 1000
+                    + record.completion_tokens * record.completion_token_unit_price / 1000
+                  ).toFixed(4)
+                }}
+              </a-button>
+              <template #content>
+                <div style="color: var(--color-neutral-10)">
+                  <div>{{ $t('PromptPrice') }}:&nbsp;{{ (record.prompt_tokens * record.prompt_token_unit_price / 1000).toFixed(4) }}</div>
+                  <div>{{ $t('CompletionPrice') }}:&nbsp;{{ (record.completion_tokens * record.completion_token_unit_price / 1000).toFixed(4) }}</div>
+                </div>
+              </template>
+            </a-tooltip>
           </template>
         </a-table>
       </div>
@@ -428,7 +452,6 @@ watch(() => store.state.userInfoVisible, () => {
     handlePageChange(1);
   }
 });
-onMounted(() => loadChatLog());
 const tableHeight = ref('200px');
 const doTableResize = (_) => {
   tableHeight.value = `${Math.min(window.innerHeight - 330, 200)}px`;

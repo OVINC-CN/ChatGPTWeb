@@ -51,6 +51,8 @@ const mZhCN = {
   WeChatScan: '微信扫码',
   FinishCharge: '完成支付',
   Tokens: '令牌数',
+  PromptPrice: '提示计费',
+  CompletionPrice: '响应计费',
 };
 
 export default mZhCN;

@@ -51,6 +51,8 @@ const mEnUS = {
   WeChatScan: 'Use WeChat to Scan',
   FinishCharge: 'Pay Success',
   Tokens: 'Tokens',
+  PromptPrice: 'Prompt Price',
+  CompletionPrice: 'Completion Price',
 };
 
 export default mEnUS;
