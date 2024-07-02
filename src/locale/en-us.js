@@ -35,6 +35,22 @@ const mEnUS = {
   Tools: 'Tools',
   ToolUseTips: 'Some models do not support tool, if the output does not meet expectations, please switch models',
   PleaseChooseTool: 'Please choose tool',
+  UserInfo: 'User Info',
+  Username: 'Usernsme',
+  Balance: 'Balance',
+  ModelName: 'Model',
+  PromptTokens: 'Prompt Tokens',
+  CompletionTokens: 'Completion Tokens',
+  Price: 'Price',
+  RequestTime: 'Time',
+  ChatHistory: 'Chat History',
+  Charge: 'Charge',
+  Refresh: 'Refresh',
+  Amount: 'Amount',
+  Cancel: 'Cancel',
+  WeChatScan: 'Use WeChat to Scan',
+  FinishCharge: 'Pay Success',
+  Tokens: 'Tokens',
 };
 
 export default mEnUS;

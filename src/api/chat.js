@@ -6,3 +6,10 @@ export const preCheckAPI = (data) => new Promise((resolve, reject) => {
       (err) => reject(err),
   );
 });
+
+export const getChatLogs = (params) => new Promise((resolve, reject) => {
+  http.get('/chat/logs/', {params}).then(
+      (res) => resolve(res),
+      (err) => reject(err),
+  );
+});
