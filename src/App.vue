@@ -115,7 +115,7 @@
           <div>
             <a-statistic
               :value="walletBalance"
-              :precision="2"
+              :precision="4"
             >
               <template #title>
                 <a-space :size="4">
