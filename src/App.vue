@@ -71,231 +71,21 @@
         </a-layout-footer>
       </a-layout>
     </a-spin>
-    <a-modal
-      :visible="userInfoVisible"
-      :footer="false"
-      :esc-to-close="true"
-      modal-class="user-info-modal"
-      :unmount-on-close="true"
-      @cancel="hideUserInfo"
-    >
-      <template #title>
-        <div style="width: 100%; text-align: left">
-          {{ $t('UserInfo') }}
-        </div>
-      </template>
-      <div class="user-info-wd-100">
-        <div
-          class="user-info-wd-100"
-          style="display: flex; justify-content: space-around; align-items: center"
-        >
-          <div class="arco-statistic">
-            <div class="arco-statistic-title">
-              <a-space :size="4">
-                <div>
-                  {{ $t('Username') }}
-                </div>
-                <a-button
-                  type="text"
-                  style="margin: 0; padding: 0"
-                  @click="doLogout"
-                >
-                  {{ $t('Logout') }}
-                </a-button>
-              </a-space>
-            </div>
-            <div class="arco-statistic-content">
-              <div class="arco-statistic-value">
-                <span class="arco-statistic-value-integer">
-                  {{ user.nick_name ? user.nick_name : '- -' }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <a-statistic
-              :value="walletBalance"
-              :precision="4"
-            >
-              <template #title>
-                <a-space :size="4">
-                  <span>{{ $t('Balance') }}</span>
-                  <a-button
-                    v-if="walletConfig.is_enabled"
-                    @click="showCharge"
-                    type="text"
-                    status="success"
-                    style="margin: 0; padding: 0"
-                  >
-                    {{ $t('Charge') }}
-                  </a-button>
-                  <a-button
-                    @click="loadWalletBalance"
-                    type="text"
-                    style="margin: 0; padding: 0"
-                  >
-                    {{ $t('Refresh') }}
-                  </a-button>
-                </a-space>
-              </template>
-              <template #suffix>
-                {{ walletConfig.unit }}
-              </template>
-            </a-statistic>
-          </div>
-        </div>
-        <a-divider style="margin: 32px 0">
-          <div style="color: var(--color-neutral-6)">
-            {{ $t('ChatHistory') }}
-          </div>
-        </a-divider>
-        <a-table
-          :loading="logLoading"
-          :columns="logColumns"
-          :data="chatLogs"
-          :pagination="chatLogPage"
-          @page-change="handlePageChange"
-          @page-size-change="handlerPageSizeChange"
-          page-position="bottom"
-          :virtual-list-props="{height: tableHeight}"
-        >
-          <template #created_at="{ record }">
-            <div style="word-break: break-word">
-              {{ record.created_at }}
-            </div>
-          </template>
-          <template #model_name="{ record }">
-            <div style="word-break: break-word">
-              {{ record.model_name }}
-            </div>
-          </template>
-          <template #tokens="{ record }">
-            <a-tooltip background-color="var(--color-bg-1)">
-              <a-button
-                type="text"
-                style="color: unset; padding: 0; margin: 0"
-              >
-                {{ record.prompt_tokens + record.completion_tokens }}
-              </a-button>
-              <template #content>
-                <div style="color: var(--color-neutral-10)">
-                  <div>{{ $t('PromptTokens') }}:&nbsp;{{ record.prompt_tokens }}</div>
-                  <div>{{ $t('CompletionTokens') }}:&nbsp;{{ record.completion_tokens }}</div>
-                </div>
-              </template>
-            </a-tooltip>
-          </template>
-          <template #price="{ record }">
-            <a-tooltip background-color="var(--color-bg-1)">
-              <a-button
-                type="text"
-                style="color: unset; padding: 0; margin: 0"
-              >
-                {{
-                  (
-                    record.prompt_tokens * record.prompt_token_unit_price / 1000
-                    + record.completion_tokens * record.completion_token_unit_price / 1000
-                  ).toFixed(4)
-                }}
-              </a-button>
-              <template #content>
-                <div style="color: var(--color-neutral-10)">
-                  <div>{{ $t('PromptPrice') }}:&nbsp;{{ (record.prompt_tokens * record.prompt_token_unit_price / 1000).toFixed(4) }}</div>
-                  <div>{{ $t('CompletionPrice') }}:&nbsp;{{ (record.completion_tokens * record.completion_token_unit_price / 1000).toFixed(4) }}</div>
-                </div>
-              </template>
-            </a-tooltip>
-          </template>
-        </a-table>
-      </div>
-    </a-modal>
-    <a-modal
-      v-model:visible="chargeVisible"
-      :footer="false"
-      :esc-to-close="true"
-      modal-class="charge-modal"
-      :unmount-on-close="true"
-    >
-      <template #title>
-        <div style="width: 100%; text-align: left;">
-          {{ $t('Charge') }}
-        </div>
-      </template>
-      <div
-        v-if="chargeImage"
-        style="display: flex; width: 100%; align-items: center; justify-content: center; flex-direction: column"
-      >
-        <div style="display: flex; align-items: center; justify-content: center">
-          <icon-wechatpay style="color: rgb(var(--green-6)); margin-right: 8px" />
-          {{ $t('WeChatScan') }}
-        </div>
-        <a-image
-          :src="'data:image/png;base64,' + chargeImage"
-          width="200px"
-          height="200px"
-          fit="contain"
-        />
-        <a-button
-          @click="showUserInfo"
-          status="success"
-          type="primary"
-        >
-          {{ $t('FinishCharge') }}
-        </a-button>
-      </div>
-      <a-form
-        v-else
-        :auto-label-width="true"
-        @submit="getChargeImage"
-      >
-        <a-form-item :label="$t('Amount')">
-          <a-input-number
-            v-model="chargeAmount"
-            :min="1"
-            :precision="0"
-            :hide-button="true"
-            :disabled="chargeLoading"
-          >
-            <template #append>
-              {{ walletConfig.unit }}
-            </template>
-          </a-input-number>
-        </a-form-item>
-        <a-form-item>
-          <a-space>
-            <a-button
-              @click="chargeVisible = false"
-              :loading="chargeLoading"
-            >
-              {{ $t('Cancel') }}
-            </a-button>
-            <a-button
-              type="primary"
-              html-type="submit"
-              :loading="chargeLoading"
-            >
-              {{ $t('Charge') }}
-            </a-button>
-          </a-space>
-        </a-form-item>
-      </a-form>
-    </a-modal>
+    <user-info />
+    <user-charge />
   </a-config-provider>
 </template>
 
 <script setup>
-import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import {useStore} from 'vuex';
 import {locale, langOption, changeLangAndReload} from './locale';
 import {useI18n} from 'vue-i18n';
 import {useRoute, useRouter} from 'vue-router';
 import Aegis from 'aegis-web-sdk';
 import {getRUMConfigAPI} from './api/trace';
-import {getMyWalletAPI, getPreChargeAPI, getWalletConfigAPI} from '@/api/wallet';
-import {getChatLogs} from '@/api/chat';
-import {handleLoading} from '@/utils/loading';
-import {Message} from '@arco-design/web-vue';
-import {signOutAPI} from '@/api/user';
+import UserCharge from '@/components/UserCharge.vue';
+import UserInfo from '@/components/UserInfo.vue';
 
 // display
 const fullScreen = ref(true);
@@ -337,132 +127,15 @@ const mainLoading = computed(() => store.state.mainLoading);
 onMounted(() => {
   store.dispatch('getUserInfo');
   store.dispatch('getModels');
+  store.dispatch('getWalletConfig');
 });
 
 // user
 const user = computed(() => store.state.user);
-const userInfoVisible = computed(() => store.state.userInfoVisible);
 const showUserInfo = () => {
-  chargeVisible.value = false;
+  store.commit('setChargeVisible', false);
   store.commit('setUserInfoVisible', true);
 };
-const hideUserInfo = () => {
-  store.commit('setUserInfoVisible', false);
-};
-const doLogout = () => {
-  signOutAPI().then(
-      () => window.location.reload(),
-      (err) => Message.error(err.response.data.message),
-  );
-};
-
-// wallet
-const walletBalance = ref(0);
-const loadWalletBalance = () => {
-  getMyWalletAPI().then((res) => walletBalance.value = res.data.balance);
-};
-watch(() => store.state.userInfoVisible, () => {
-  if (store.state.userInfoVisible) {
-    loadWalletBalance();
-  }
-});
-const walletConfig = ref({is_enabled: false, unit: ''});
-const loadWalletConfig = () => {
-  getWalletConfigAPI().then(
-      (res) => walletConfig.value = res.data,
-      (err) => Message.error(err.response.data.message),
-  );
-};
-onMounted(() => loadWalletConfig());
-const chargeVisible = ref(false);
-const showCharge = () => {
-  hideUserInfo();
-  chargeVisible.value = true;
-};
-const chargeLoading = ref(false);
-const chargeAmount = ref(1);
-const chargeImage = ref('');
-const getChargeImage = () => {
-  handleLoading(chargeLoading, true);
-  getPreChargeAPI(chargeAmount.value).then(
-      (res) => {
-        chargeImage.value = res.data;
-      },
-      (err) => Message.error(err.response.data.message),
-  ).finally(() => handleLoading(chargeLoading, false));
-};
-watch(() => chargeVisible.value, () => {
-  if (!chargeVisible.value) {
-    chargeAmount.value = 1;
-    chargeImage.value = '';
-  }
-});
-
-// chat log
-const logLoading = ref(false);
-const chatLogs = ref([]);
-const logColumns = ref(
-    [
-      {
-        title: i18n.t('RequestTime'),
-        slotName: 'created_at',
-      },
-      {
-        title: i18n.t('ModelName'),
-        slotName: 'model_name',
-      },
-      {
-        title: i18n.t('Tokens'),
-        slotName: 'tokens',
-      },
-      {
-        title: i18n.t('Price'),
-        slotName: 'price',
-      },
-    ],
-);
-const chatLogPage = ref({
-  current: 1,
-  pageSize: 20,
-  total: 0,
-  simple: true,
-  showTotal: true,
-});
-const loadChatLog = () => {
-  handleLoading(logLoading, true);
-  getChatLogs({page: chatLogPage.value.current, size: chatLogPage.value.pageSize}).then(
-      (res) => {
-        chatLogs.value = res.data.results;
-        chatLogPage.value.total = res.data.total;
-      },
-      (err) => Message.error(err.response.data.message),
-  ).finally(() => handleLoading(logLoading, false));
-};
-const handlePageChange = (page) => {
-  chatLogPage.value.current = page;
-  loadChatLog();
-};
-const handlerPageSizeChange = (size) => {
-  chatLogPage.value.current = 1;
-  chatLogPage.value.pageSize = size;
-  loadChatLog();
-};
-watch(() => store.state.userInfoVisible, () => {
-  if (store.state.userInfoVisible) {
-    handlePageChange(1);
-  }
-});
-const tableHeight = ref('200px');
-const doTableResize = (_) => {
-  tableHeight.value = `${Math.min(window.innerHeight - 330, 200)}px`;
-};
-onMounted(() => {
-  doTableResize(null);
-  window.addEventListener('resize', doTableResize);
-});
-onUnmounted(() => {
-  window.removeEventListener('resize', doTableResize);
-});
 
 // aegis
 const initRUM = () => {

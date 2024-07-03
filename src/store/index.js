@@ -1,6 +1,7 @@
 import {createStore} from 'vuex';
 import {getUserInfoAPI} from '@/api/user';
 import {listModelsAPI} from '@/api/model';
+import {getWalletConfigAPI} from '@/api/wallet';
 
 const store = createStore({
   state() {
@@ -14,6 +15,7 @@ const store = createStore({
         user_type: '',
       },
       userInfoVisible: false,
+      chargeVisible: false,
       userProperties: {
         avatar: null,
         phone_number: null,
@@ -22,11 +24,18 @@ const store = createStore({
       userPropertiesRaw: [],
       models: [],
       currentModel: '',
+      walletConfig: {
+        is_enabled: false,
+        unit: '',
+      },
     };
   },
   mutations: {
     setUserInfoVisible(state, payload) {
       state.userInfoVisible = payload;
+    },
+    setChargeVisible(state, payload) {
+      state.chargeVisible = payload;
     },
     setMainLoading(state, payload) {
       state.mainLoading = payload;
@@ -49,6 +58,9 @@ const store = createStore({
     setCurrentModel(state, payload) {
       state.currentModel = payload;
     },
+    setWalletConfig(state, payload) {
+      state.walletConfig = payload;
+    },
   },
   actions: {
     setMainLoading({commit}, payload) {
@@ -69,6 +81,11 @@ const store = createStore({
     getModels({commit}) {
       listModelsAPI().then((res) => {
         commit('setModels', res.data);
+      });
+    },
+    getWalletConfig({commit}) {
+      getWalletConfigAPI().then((res) => {
+        commit('setWalletConfig', res.data);
       });
     },
   },
