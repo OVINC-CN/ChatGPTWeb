@@ -6,7 +6,7 @@ ChatGPT Web is a powerful multi-model access platform that supports various main
 
 ## Features
 
-- **Multi-Model Access**: Supports various AI models such as Azure OpenAI, Tencent Hunyuan, Alibaba Tongyi Qianwen, Baidu ERNIE-BOT, Google Gemini, Moonshot V1, and more.
+- **Multi-Model Access**: Supports various AI models such as Azure OpenAI, Tencent Hunyuan, Alibaba Tongyi Qianwen, Baidu ERNIE-BOT, Google Gemini, Moonshot V1, ByteDance Doubao, and more.
 - **WeChat Payment Integration**: Provides WeChat payment integration, making it convenient for users to perform payment operations.
 - **Front-End and Back-End Separation**: The front-end is built using Vue for static deployment, and the back-end is built using Django for horizontal scaling, supporting high concurrent access.
 
