@@ -26,6 +26,8 @@ const props = defineProps({
 const store = useStore();
 const user = computed(() => store.state.user);
 
+const regex = /(\.jpg|\.png|\.jepg|\.webp)/;
+
 const emits = defineEmits(['reGenerate']);
 </script>
 
@@ -66,21 +68,29 @@ const emits = defineEmits(['reGenerate']);
         :text="message.content"
         class="v-md-preview"
       />
-
-      <a-link
-        v-if="message.file"
-        :href="message.file"
-        target="_blank"
-        style="padding: unset"
-      >
-        <a-space
-          :size="2"
+      <div v-if="message.file">
+        <a-image
+          v-if="regex.test(message.file)"
+          :src="message.file"
+          width="200px"
+          height="200px"
+          fit="cover"
+        />
+        <a-link
+          v-else
+          :href="message.file"
+          target="_blank"
+          style="padding: unset"
         >
-          <icon-file />
-          {{ message.file.split('/').slice(-1)[0] }}
-        </a-space>
-      </a-link>
-      <icon-loading v-show="isLast && chatLoading" />
+          <a-space
+            :size="2"
+          >
+            <icon-file />
+            {{ message.file.split('/').slice(-1)[0] }}
+          </a-space>
+        </a-link>
+      </div>
+      <icon-loading v-show="isLast && chatLoading && !message.content" />
     </div>
     <a-avatar
       v-show="false"
