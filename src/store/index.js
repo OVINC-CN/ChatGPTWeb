@@ -23,7 +23,6 @@ const store = createStore({
       },
       userPropertiesRaw: [],
       models: [],
-      currentModel: '',
       walletConfig: {
         is_enabled: false,
         unit: '',
@@ -54,9 +53,6 @@ const store = createStore({
     },
     setModels(state, payload) {
       state.models = payload;
-    },
-    setCurrentModel(state, payload) {
-      state.currentModel = payload;
     },
     setWalletConfig(state, payload) {
       state.walletConfig = payload;

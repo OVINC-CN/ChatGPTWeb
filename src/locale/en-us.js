@@ -53,6 +53,12 @@ const mEnUS = {
   Tokens: 'Tokens',
   PromptPrice: 'Prompt Price',
   CompletionPrice: 'Completion Price',
+  PromptUnitPrice: 'Prompt Price / Unit',
+  CompletionUnitPrice: 'Completion Price / Unit',
+  PriceUnitTips: 'Each unit consists of 1000 tokens of text or 1000 images',
+  Model: 'Model',
+  PleaseChooseModel: 'Please choose Model',
+  Desc: 'Description',
 };
 
 export default mEnUS;

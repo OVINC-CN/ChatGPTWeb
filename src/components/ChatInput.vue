@@ -49,9 +49,22 @@ const promptForm = ref({
 const store = useStore();
 
 // model
-const model = computed(() => store.state.currentModel);
-const modelName = ref('');
-const modelDesc = ref('');
+const currentModel = ref('');
+const model = ref({});
+const previewModelData = computed(() => {
+  return [
+    {
+      label: i18n.t('PromptUnitPrice'),
+      value: model.value.prompt_price,
+      span: 1,
+    },
+    {
+      label: i18n.t('CompletionUnitPrice'),
+      value: model.value.completion_price,
+      span: 1,
+    },
+  ];
+});
 const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
 watch(() => allModels.value, () => {
@@ -59,40 +72,46 @@ watch(() => allModels.value, () => {
     return;
   }
   const value = localStorage.getItem(localModelKey.value);
-  let matched = false;
+  let isMatched = false;
   allModels.value.forEach((item) => {
     if (item.id === value) {
-      store.commit('setCurrentModel', value);
-      modelName.value = item.name;
-      modelDesc.value = item.desc;
-      matched = true;
+      currentModel.value = item.id;
+      model.value = item;
+      changeModel();
+      isMatched = true;
     }
   });
-  if (matched) {
+  if (isMatched) {
     return;
   }
-  store.commit('setCurrentModel', allModels.value[0].id);
-  modelName.value = allModels.value[0].name;
-  modelDesc.value = allModels.value[0].desc;
+  currentModel.value = allModels.value[0].model;
+  model.value = allModels.value[0];
+  changeModel();
 }, {deep: true, immediate: true});
-watch(() => model.value, () => {
-  if (!allModels.value.length) {
+const modelSelectVisible = ref(false);
+const showModelSelect = () => {
+  modelSelectVisible.value = true;
+};
+const hideSelectModel = () => {
+  modelSelectVisible.value = false;
+};
+const changeModel = () => {
+  if (!currentModel.value) {
     return;
   }
-  let matched = false;
+  localStorage.setItem(localModelKey.value, currentModel.value);
+  hideSelectModel();
+};
+const previewModel = () => {
+  if (!currentModel.value) {
+    return;
+  }
   allModels.value.forEach((item) => {
-    if (item.id === model.value) {
-      modelName.value = item.name;
-      modelDesc.value = item.desc;
-      matched = true;
+    if (item.id === currentModel.value) {
+      model.value = item;
     }
   });
-  if (matched) {
-    return;
-  }
-  modelName.value = model.value;
-  modelDesc.value = model.value.desc;
-});
+};
 
 // chat
 const lastResponseContent = ref(null);
@@ -102,7 +121,7 @@ const doChat = async () => {
   // params
   const params = {
     messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file}],
-    model: model.value,
+    model: currentModel.value,
   };
   // max message length control
   params.messages = params.messages.slice(-(maxMessage.value + 1));
@@ -230,91 +249,6 @@ const onKeydown = (event) => {
 
 const showEditBox = ref(true);
 
-// upload file
-const uploadEnabled = ref(false);
-onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
-const fileUploadInput = ref(null);
-const customUpload = () => {
-  if (promptForm.value.file) {
-    promptForm.value.file = null;
-    return;
-  }
-  fileUploadInput.value.click();
-};
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  fileUploadInput.value.value = null;
-  doUploadFile(file);
-};
-const doUploadFile = (file) => {
-  emits('setChatLoading', true);
-  checkTCaptcha((ret) => {
-    getCOSUploadTempKeyAPI(file.name, 'file-extract', ret).then(
-        (res) => {
-          const credentials = res.data;
-          const cos = loadCOSClient(credentials);
-          cos.putObject(
-              {
-                Bucket: credentials.cos_bucket,
-                Region: credentials.cos_region,
-                Key: credentials.key,
-                Body: file,
-              },
-              (err) => {
-                if (err) {
-                  emits('setChatLoading', false);
-                  Message.error(err.message);
-                } else {
-                  const filePath = `${credentials.cos_url}${credentials.key}`;
-                  extractFileAPI(filePath).then(
-                      () => {
-                        checkExtractStatus(filePath);
-                      },
-                      (err) => {
-                        emits('setChatLoading', false);
-                        Message.error(err.response.data.message);
-                      },
-                  );
-                }
-              });
-        },
-        (err) => {
-          emits('setChatLoading', false);
-          Message.error(err.response.data.message);
-        },
-    );
-  });
-};
-const checkExtractStatus = (filePath) => {
-  setTimeout(() => {
-    extractFileStatusAPI(filePath).then(
-        (res) => {
-          if (res.data.is_finished) {
-            if (res.data.is_success) {
-              promptForm.value.file = filePath;
-            } else {
-              Message.error(i18n.t('ExtractFileFailed'));
-            }
-            emits('setChatLoading', false);
-          } else {
-            checkExtractStatus(filePath);
-          }
-        },
-        (err) => {
-          emits('setChatLoading', false);
-          Message.error(err.response.data.message);
-        },
-    );
-  }, 2000);
-};
-
-// models
-const models = computed(() => store.state.models);
-const setModel = (model) => {
-  localStorage.setItem(localModelKey.value, model);
-  store.commit('setCurrentModel', model);
-};
-
 // preset
 const presetVisible = ref(false);
 const changePreset = () => presetVisible.value = true;
@@ -410,8 +344,90 @@ onMounted(() => {
   }
 });
 
+// upload file
+const uploadEnabled = ref(false);
+onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
+const fileUploadInput = ref(null);
+const customUpload = () => {
+  if (promptForm.value.file) {
+    promptForm.value.file = null;
+    return;
+  }
+  fileUploadInput.value.click();
+};
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  fileUploadInput.value.value = null;
+  doUploadFile(file);
+};
+const doUploadFile = (file) => {
+  emits('setChatLoading', true);
+  checkTCaptcha((ret) => {
+    getCOSUploadTempKeyAPI(file.name, 'file-extract', ret).then(
+        (res) => {
+          const credentials = res.data;
+          const cos = loadCOSClient(credentials);
+          cos.putObject(
+              {
+                Bucket: credentials.cos_bucket,
+                Region: credentials.cos_region,
+                Key: credentials.key,
+                Body: file,
+              },
+              (err) => {
+                if (err) {
+                  emits('setChatLoading', false);
+                  Message.error(err.message);
+                } else {
+                  const filePath = `${credentials.cos_url}${credentials.key}`;
+                  extractFileAPI(filePath).then(
+                      () => {
+                        checkExtractStatus(filePath);
+                      },
+                      (err) => {
+                        emits('setChatLoading', false);
+                        Message.error(err.response.data.message);
+                      },
+                  );
+                }
+              });
+        },
+        (err) => {
+          emits('setChatLoading', false);
+          Message.error(err.response.data.message);
+        },
+    );
+  });
+};
+const checkExtractStatus = (filePath) => {
+  setTimeout(() => {
+    extractFileStatusAPI(filePath).then(
+        (res) => {
+          if (res.data.is_finished) {
+            if (res.data.is_success) {
+              promptForm.value.file = filePath;
+            } else {
+              Message.error(i18n.t('ExtractFileFailed'));
+            }
+            emits('setChatLoading', false);
+          } else {
+            checkExtractStatus(filePath);
+          }
+        },
+        (err) => {
+          emits('setChatLoading', false);
+          Message.error(err.response.data.message);
+        },
+    );
+  }, 2000);
+};
+
 // paste
+const enabledPasteToUpload = ref(true);
 const handlePaste = (e) => {
+  if (!enabledPasteToUpload.value) {
+    return;
+  }
   const items = e.clipboardData.items;
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
@@ -456,26 +472,13 @@ defineExpose({reGenerate, promptForm});
             >
               <icon-arrow-down />
             </a-button>
-            <a-dropdown
-              @select="setModel"
-              v-if="showEditBox"
+            <a-button
+              :disabled="chatLoading"
+              class="chat-input-left-button"
+              @click="showModelSelect"
             >
-              <a-button
-                :disabled="chatLoading"
-                class="chat-input-left-button"
-              >
-                <icon-robot />
-              </a-button>
-              <template #content>
-                <a-doption
-                  v-for="item in models"
-                  :key="item.id"
-                  :value="item.id"
-                >
-                  {{ item.name }}
-                </a-doption>
-              </template>
-            </a-dropdown>
+              <icon-robot />
+            </a-button>
             <a-button
               v-if="showEditBox"
               :disabled="chatLoading"
@@ -533,7 +536,7 @@ defineExpose({reGenerate, promptForm});
               v-if="showEditBox"
               type="primary"
               html-type="submit"
-              :disabled="promptForm.content.length <= 0 || !model || chatLoading"
+              :disabled="promptForm.content.length <= 0 || !currentModel || chatLoading"
             >
               <icon-send />
             </a-button>
@@ -553,7 +556,7 @@ defineExpose({reGenerate, promptForm});
         >
           <a-textarea
             v-model="promptForm.content"
-            :placeholder="model ? ($t('CurrentModel') + ': ' + modelName + '\n' + (modelDesc ? modelDesc : '')) : $t('NoModelChoosed')"
+            :placeholder="model.id ? ($t('CurrentModel') + ': ' + model.name + '\n' + (model.desc ? model.desc : '')) : $t('NoModelChoosed')"
             :auto-size="{minRows: 3, maxRows: 10}"
             :disabled="chatLoading"
             @keydown="onKeydown"
@@ -703,6 +706,66 @@ defineExpose({reGenerate, promptForm});
         </a-space>
       </a-space>
     </a-modal>
+    <a-modal
+      v-model:visible="modelSelectVisible"
+      :footer="false"
+      :esc-to-close="true"
+    >
+      <template #title>
+        <div style="text-align: left; width: 100%">
+          {{ $t('Model') }}
+        </div>
+      </template>
+      <a-space
+        direction="vertical"
+        style="width: 100%;"
+      >
+        <a-select
+          v-if="allModels.length > 0"
+          @change="previewModel"
+          :placeholder="$t('PleaseChooseModel')"
+          :allow-search="true"
+          v-model="currentModel"
+        >
+          <a-option
+            v-for="item in allModels"
+            :key="item.id"
+            :value="item.id"
+            :label="item.name"
+          />
+        </a-select>
+        <a-descriptions
+          layout="inline-vertical"
+          bordered
+          :data="previewModelData"
+          :column="2"
+        >
+          <template
+            v-for="item in previewModelData"
+            :key="item.name"
+          >
+            <a-descriptions-item
+              :label="item.label"
+              :span="item.span"
+            >
+              <span v-if="typeof item.value === 'number'">{{ item.value ? item.value.toFixed(4) : '- -' }}</span>
+              <span v-else>{{ item.value ? item.value : '- -' }}</span>
+            </a-descriptions-item>
+          </template>
+        </a-descriptions>
+        <div class="model-price-tips">
+          {{ $t('PriceUnitTips') }}
+        </div>
+        <a-space style="width: 100%; display: flex; justify-content: flex-end">
+          <a-button
+            type="primary"
+            @click="changeModel"
+          >
+            {{ $t('Save') }}
+          </a-button>
+        </a-space>
+      </a-space>
+    </a-modal>
   </div>
 </template>
 
@@ -740,7 +803,8 @@ defineExpose({reGenerate, promptForm});
 
 .model-ignore-system-tips,
 .model-context-tips,
-.model-tool-tips {
+.model-tool-tips,
+.model-price-tips {
   color: var(--color-neutral-6);
   font-size: 12px;
 }

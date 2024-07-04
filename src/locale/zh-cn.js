@@ -53,6 +53,12 @@ const mZhCN = {
   Tokens: '令牌数',
   PromptPrice: '提示计费',
   CompletionPrice: '响应计费',
+  PromptUnitPrice: '提示计费/单元',
+  CompletionUnitPrice: '响应计费/单元',
+  PriceUnitTips: '每单元为1000Token的文本或1000张图片',
+  Model: '模型',
+  PleaseChooseModel: '请选择模型',
+  Desc: '描述',
 };
 
 export default mZhCN;
