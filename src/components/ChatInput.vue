@@ -47,6 +47,7 @@ const promptForm = ref({
 
 // store
 const store = useStore();
+const walletConfig = computed(() => store.state.walletConfig);
 
 // model
 const currentModel = ref('');
@@ -55,12 +56,12 @@ const previewModelData = computed(() => {
   return [
     {
       label: i18n.t('PromptUnitPrice'),
-      value: model.value.prompt_price,
+      value: model.value.prompt_price ? `${model.value.prompt_price}${walletConfig.value.unit}` : '',
       span: 1,
     },
     {
       label: i18n.t('CompletionUnitPrice'),
-      value: model.value.completion_price,
+      value: model.value.completion_price ? `${model.value.completion_price}${walletConfig.value.unit}` : '',
       span: 1,
     },
   ];
