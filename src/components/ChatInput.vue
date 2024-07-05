@@ -583,7 +583,6 @@ defineExpose({reGenerate, promptForm});
       >
         <a-select
           :placeholder="$t('PleaseChooseTool')"
-          :allow-search="true"
           v-model="currentTool"
         >
           <a-option
@@ -671,7 +670,6 @@ defineExpose({reGenerate, promptForm});
           id="chat-input-system-define-content-tag"
           @change="doSelectSystemPreset"
           :placeholder="$t('PleaseChoosePreset')"
-          :allow-search="true"
           v-model="chosenPreset"
         >
           <a-option
@@ -725,7 +723,6 @@ defineExpose({reGenerate, promptForm});
           v-if="allModels.length > 0"
           @change="previewModel"
           :placeholder="$t('PleaseChooseModel')"
-          :allow-search="true"
           v-model="currentModel"
         >
           <a-option
