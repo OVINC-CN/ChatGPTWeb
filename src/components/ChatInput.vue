@@ -434,7 +434,7 @@ const handlePaste = (e) => {
     const item = items[i];
     if (item.kind === 'file') {
       const file = item.getAsFile();
-      if (file.type.indexOf('image/') !== -1 || file.type==='application/pdf') {
+      if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
         doUploadFile(file);
       }
     }
@@ -442,6 +442,55 @@ const handlePaste = (e) => {
 };
 onMounted(() => window.addEventListener('paste', handlePaste));
 onUnmounted(() => window.removeEventListener('paste', handlePaste));
+
+// drag
+const enableDragToUpload = ref(true);
+const handleDragOver = (e) => {
+  if (!enableDragToUpload.value) {
+    return;
+  }
+  e.preventDefault();
+};
+const handleDragEnter = (e) => {
+  if (!enableDragToUpload.value) {
+    return;
+  }
+  e.preventDefault();
+};
+const handleDragLeave = (e) => {
+  if (!enableDragToUpload.value) {
+    return;
+  }
+  e.preventDefault();
+};
+const handleDrop = (e) => {
+  if (!enableDragToUpload.value) {
+    return;
+  }
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    const file = files[0];
+    console.log(file.type);
+    if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
+      doUploadFile(file);
+    }
+  }
+};
+onMounted(() => {
+  const textInputEl = document.getElementById('chat-input-textarea');
+  textInputEl.addEventListener('dragover', handleDragOver);
+  textInputEl.addEventListener('drop', handleDrop);
+  textInputEl.addEventListener('dragenter', handleDragEnter);
+  textInputEl.addEventListener('dragleave', handleDragLeave);
+});
+onUnmounted(() => {
+  const textInputEl = document.getElementById('chat-input-textarea');
+  textInputEl.removeEventListener('dragover', handleDragOver);
+  textInputEl.removeEventListener('drop', handleDrop);
+  textInputEl.removeEventListener('dragenter', handleDragEnter);
+  textInputEl.removeEventListener('dragleave', handleDragLeave);
+});
 
 defineExpose({reGenerate, promptForm});
 </script>
@@ -452,7 +501,7 @@ defineExpose({reGenerate, promptForm});
       ref="fileUploadInput"
       style="display: none"
       type="file"
-      accept="image/*, application/pdf"
+      accept="image/*, application/*, text/*"
       @change="handleFileChange"
     >
     <a-form
@@ -556,6 +605,7 @@ defineExpose({reGenerate, promptForm});
           :loading="chatLoading"
         >
           <a-textarea
+            id="chat-input-textarea"
             v-model="promptForm.content"
             :placeholder="model.id ? ($t('CurrentModel') + ': ' + model.name + '\n' + (model.desc ? model.desc : '')) : $t('NoModelChoosed')"
             :auto-size="{minRows: 3, maxRows: 10}"
