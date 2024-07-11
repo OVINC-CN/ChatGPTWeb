@@ -55,12 +55,16 @@ onMounted(() => {
     el.addEventListener('wheel', () => {
       emits('toggleUserBehavior', true);
     });
+    el.addEventListener('touchmove', () => {
+      emits('toggleUserBehavior', true);
+    });
   }
 });
 onUnmounted(() => {
   const el = document.getElementById('chat-display');
   if (el) {
     el.removeEventListener('wheel', () => {});
+    el.removeEventListener('touchmove', () => {});
   }
 });
 </script>
