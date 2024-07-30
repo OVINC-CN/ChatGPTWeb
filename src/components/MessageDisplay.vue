@@ -1,6 +1,6 @@
 <script setup>
 import MessageContent from './MessageContent.vue';
-import {onMounted, onUnmounted, watch} from 'vue';
+import {onMounted, onUnmounted, ref, watch} from 'vue';
 import {Role} from '@/constants';
 
 // props
@@ -67,6 +67,14 @@ onUnmounted(() => {
     el.removeEventListener('touchmove', () => {});
   }
 });
+
+// image preview
+const previewImageVisible = ref(false);
+const previewImageUrl = ref('');
+const onImageClick = (url) => {
+  previewImageUrl.value = url;
+  previewImageVisible.value = true;
+};
 </script>
 
 <template>
@@ -89,10 +97,12 @@ onUnmounted(() => {
       :is-last="index === localMessages.length - 1"
       :chat-loading="chatLoading"
       @re-generate="emits('reGenerate')"
+      @on-image-click="onImageClick"
     />
     <message-content
       v-show="promptForm.content"
       :message="{role: Role.User, content: promptForm.content}"
+      @on-image-click="onImageClick"
     />
   </a-space>
   <div
@@ -108,6 +118,10 @@ onUnmounted(() => {
       >
     </div>
   </div>
+  <a-image-preview
+    v-model:visible="previewImageVisible"
+    :src="previewImageUrl"
+  />
 </template>
 
 <style scoped>

@@ -28,7 +28,9 @@ const user = computed(() => store.state.user);
 
 const regex = /(\.jpg|\.png|\.jepg|\.webp)/;
 
-const emits = defineEmits(['reGenerate']);
+const emits = defineEmits(['reGenerate', 'onImageClick']);
+
+const onImageClick = (images, index) => emits('onImageClick', images[index]);
 </script>
 
 <template>
@@ -67,6 +69,7 @@ const emits = defineEmits(['reGenerate']);
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
+        @image-click="onImageClick"
       />
       <div v-if="message.file">
         <a-image
