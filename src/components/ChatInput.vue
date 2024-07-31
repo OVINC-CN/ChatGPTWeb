@@ -85,7 +85,7 @@ watch(() => allModels.value, () => {
   if (isMatched) {
     return;
   }
-  currentModel.value = allModels.value[0].model;
+  currentModel.value = allModels.value[0].id;
   model.value = allModels.value[0];
   changeModel();
 }, {deep: true, immediate: true});
