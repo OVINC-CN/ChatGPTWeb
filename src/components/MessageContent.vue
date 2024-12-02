@@ -71,17 +71,17 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
         class="v-md-preview"
         @image-click="onImageClick"
       />
-      <div v-if="message.file">
+      <div v-if="message.previewFile">
         <a-image
           v-if="regex.test(message.file)"
-          :src="message.file"
+          :src="message.previewFile"
           width="200px"
           height="200px"
           fit="cover"
         />
         <a-link
           v-else
-          :href="message.file"
+          :href="message.previewFile"
           target="_blank"
           style="padding: unset"
         >

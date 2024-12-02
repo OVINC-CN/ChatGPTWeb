@@ -43,6 +43,7 @@ const i18n = useI18n();
 const promptForm = ref({
   content: '',
   file: '',
+  previewFile: '',
 });
 
 // store
@@ -68,27 +69,29 @@ const previewModelData = computed(() => {
 });
 const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
-watch(() => allModels.value, () => {
-  if (!allModels.value.length) {
-    return;
-  }
-  const value = localStorage.getItem(localModelKey.value);
-  let isMatched = false;
-  allModels.value.forEach((item) => {
-    if (item.id === value) {
-      currentModel.value = item.id;
-      model.value = item;
-      changeModel();
-      isMatched = true;
+onMounted(() => {
+  watch(() => allModels.value, () => {
+    if (!allModels.value.length) {
+      return;
     }
-  });
-  if (isMatched) {
-    return;
-  }
-  currentModel.value = allModels.value[0].id;
-  model.value = allModels.value[0];
-  changeModel();
-}, {deep: true, immediate: true});
+    const value = localStorage.getItem(localModelKey.value);
+    let isMatched = false;
+    allModels.value.forEach((item) => {
+      if (item.id === value) {
+        currentModel.value = item.id;
+        model.value = item;
+        changeModel();
+        isMatched = true;
+      }
+    });
+    if (isMatched) {
+      return;
+    }
+    currentModel.value = allModels.value[0].id;
+    model.value = allModels.value[0];
+    changeModel();
+  }, {deep: true, immediate: true});
+});
 const modelSelectVisible = ref(false);
 const showModelSelect = () => {
   modelSelectVisible.value = true;
@@ -121,7 +124,7 @@ const doChat = async () => {
   emits('setChatLoading', true);
   // params
   const params = {
-    messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file}],
+    messages: [...props.localMessages, {role: 'user', content: promptForm.value.content, file: promptForm.value.file, previewFile: promptForm.value.previewFile}],
     model: currentModel.value,
   };
   // max message length control
@@ -150,7 +153,7 @@ const doChat = async () => {
     return;
   }
   // add message to display
-  emits('addMessage', {role: 'user', content: promptForm.value.content, file: promptForm.value.file});
+  emits('addMessage', {role: 'user', content: promptForm.value.content, file: promptForm.value.file, previewFile: promptForm.value.previewFile});
   // auto scroll
   emits('toggleUserBehavior', false);
   // init response content
@@ -159,6 +162,7 @@ const doChat = async () => {
   // clear input
   promptForm.value.content = '';
   promptForm.value.file = null;
+  promptForm.value.previewFile = null;
   // send message
   sendMessage(JSON.stringify({key}), true);
 };
@@ -222,6 +226,7 @@ const reGenerate = () => {
   emits('replaceMessages', props.localMessages.slice(0, props.localMessages.length - 2));
   promptForm.value.content = props.localMessages[props.localMessages.length -2].content;
   promptForm.value.file = props.localMessages[props.localMessages.length -2].file;
+  promptForm.value.previewFile = props.localMessages[props.localMessages.length -2].previewFile;
   checkForRegenerate(willingLength);
 };
 const checkForRegenerate = (willingLength) => {
@@ -352,6 +357,7 @@ const fileUploadInput = ref(null);
 const customUpload = () => {
   if (promptForm.value.file) {
     promptForm.value.file = null;
+    promptForm.value.previewFile = null;
     return;
   }
   fileUploadInput.value.click();
@@ -380,10 +386,19 @@ const doUploadFile = (file) => {
                   emits('setChatLoading', false);
                   Message.error(err.message);
                 } else {
-                  const filePath = `${credentials.cos_url}${credentials.key}`;
+                  const filePath = `${credentials.cos_url}/${credentials.key}`;
+                  const fileSuffix = credentials.key.split('.').pop();
+                  let signedFilePath = new URL(`${credentials.cos_url}/${credentials.key}`);
+                  if (credentials.cdn_sign) {
+                    signedFilePath.searchParams.append(credentials.cdn_sign_param, credentials.cdn_sign);
+                  }
+                  if (credentials.image_format) {
+                    signedFilePath.searchParams.append(credentials.image_format, '');
+                  }
+                  signedFilePath = signedFilePath.toString();
                   extractFileAPI(filePath).then(
                       () => {
-                        checkExtractStatus(filePath);
+                        checkExtractStatus(filePath, signedFilePath);
                       },
                       (err) => {
                         emits('setChatLoading', false);
@@ -400,19 +415,20 @@ const doUploadFile = (file) => {
     );
   });
 };
-const checkExtractStatus = (filePath) => {
+const checkExtractStatus = (filePath, signedFilePath) => {
   setTimeout(() => {
     extractFileStatusAPI(filePath).then(
         (res) => {
           if (res.data.is_finished) {
             if (res.data.is_success) {
               promptForm.value.file = filePath;
+              promptForm.value.previewFile = signedFilePath;
             } else {
               Message.error(i18n.t('ExtractFileFailed'));
             }
             emits('setChatLoading', false);
           } else {
-            checkExtractStatus(filePath);
+            checkExtractStatus(filePath, signedFilePath);
           }
         },
         (err) => {
