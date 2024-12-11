@@ -48,7 +48,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
     >
       <img
         alt="ChatGPT Logo"
-        src="/chatgpt.png"
+        src="/logo.png"
       >
     </a-avatar>
     <div

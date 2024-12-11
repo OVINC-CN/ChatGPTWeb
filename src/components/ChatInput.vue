@@ -7,11 +7,9 @@ import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
 import globalContext from '../context';
 import {checkTCaptcha} from '@/utils/tcaptcha';
-import {extractFileAPI, extractFileStatusAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
+import {getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
 import {loadCOSClient} from '@/utils/cos';
-import {IconFile, IconDelete} from '@arco-design/web-vue/es/icon';
 import {listSystemPresetAPI} from '@/api/model';
-import {listToolsAPI} from '@/api/tool';
 
 // props
 const props = defineProps({
@@ -132,10 +130,6 @@ const doChat = async () => {
   // system define
   if (props.systemDefine) {
     params.messages.unshift({role: 'system', content: props.systemDefine});
-  }
-  // use tool
-  if (currentTool.value) {
-    params['tools'] = [currentTool.value];
   }
   // call api
   let key = '';
@@ -312,44 +306,6 @@ onMounted(() => {
   }
 });
 
-// tools
-const tools = ref([]);
-const loadTools = () => {
-  listToolsAPI().then((res) => tools.value = res.data);
-};
-onMounted(() => loadTools());
-const currentTool = ref('');
-const currentToolDesc = computed(() => {
-  let val = '';
-  tools.value.forEach((item) => {
-    if (item.id === currentTool.value) {
-      val = item.desc;
-    }
-  });
-  return val ? val : '';
-});
-const toolVisible = ref(false);
-const changeTool = () => toolVisible.value = true;
-const doSubmitTool = () => {
-  toolVisible.value = false;
-  localStorage.setItem(localToolKey.value, JSON.stringify(currentTool.value));
-};
-const resetTool = () => {
-  toolVisible.value = false;
-  currentTool.value = '';
-  currentToolDesc.value = '';
-  doSubmitTool();
-};
-const localToolKey = ref('local-tool');
-onMounted(() => {
-  const value = localStorage.getItem(localToolKey.value);
-  if (value) {
-    try {
-      currentTool.value = JSON.parse(value);
-    } catch (_) {}
-  }
-});
-
 // upload file
 const uploadEnabled = ref(false);
 onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
@@ -387,56 +343,25 @@ const doUploadFile = (file) => {
                   Message.error(err.message);
                 } else {
                   const filePath = `${credentials.cos_url}/${credentials.key}`;
-                  const fileSuffix = credentials.key.split('.').pop();
-                  let signedFilePath = new URL(`${credentials.cos_url}/${credentials.key}`);
+                  const signedFilePath = new URL(`${credentials.cos_url}/${credentials.key}`);
                   if (credentials.cdn_sign) {
                     signedFilePath.searchParams.append(credentials.cdn_sign_param, credentials.cdn_sign);
                   }
                   if (credentials.image_format) {
                     signedFilePath.searchParams.append(credentials.image_format, '');
                   }
-                  signedFilePath = signedFilePath.toString();
-                  extractFileAPI(filePath).then(
-                      () => {
-                        checkExtractStatus(filePath, signedFilePath);
-                      },
-                      (err) => {
-                        emits('setChatLoading', false);
-                        Message.error(err.response.data.message);
-                      },
-                  );
+                  promptForm.value.file = filePath;
+                  promptForm.value.previewFile = signedFilePath.toString();
                 }
+                emits('setChatLoading', false);
               });
         },
         (err) => {
-          emits('setChatLoading', false);
           Message.error(err.response.data.message);
+          emits('setChatLoading', false);
         },
     );
   });
-};
-const checkExtractStatus = (filePath, signedFilePath) => {
-  setTimeout(() => {
-    extractFileStatusAPI(filePath).then(
-        (res) => {
-          if (res.data.is_finished) {
-            if (res.data.is_success) {
-              promptForm.value.file = filePath;
-              promptForm.value.previewFile = signedFilePath;
-            } else {
-              Message.error(i18n.t('ExtractFileFailed'));
-            }
-            emits('setChatLoading', false);
-          } else {
-            checkExtractStatus(filePath, signedFilePath);
-          }
-        },
-        (err) => {
-          emits('setChatLoading', false);
-          Message.error(err.response.data.message);
-        },
-    );
-  }, 2000);
 };
 
 // paste
@@ -450,7 +375,7 @@ const handlePaste = (e) => {
     const item = items[i];
     if (item.kind === 'file') {
       const file = item.getAsFile();
-      if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
+      if (file.type.indexOf('image/') !== -1) {
         doUploadFile(file);
       }
     }
@@ -488,7 +413,7 @@ const handleDrop = (e) => {
   if (files.length > 0) {
     const file = files[0];
     console.log(file.type);
-    if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
+    if (file.type.indexOf('image/') !== -1) {
       doUploadFile(file);
     }
   }
@@ -517,7 +442,7 @@ defineExpose({reGenerate, promptForm});
       ref="fileUploadInput"
       style="display: none"
       type="file"
-      accept="image/*, application/*, text/*"
+      accept="image/*"
       @change="handleFileChange"
     >
     <a-form
@@ -546,7 +471,7 @@ defineExpose({reGenerate, promptForm});
               <icon-robot />
             </a-button>
             <a-button
-              v-if="showEditBox"
+              v-if="showEditBox && model?.config?.support_system_define"
               :disabled="chatLoading"
               @click="changePreset"
               class="chat-input-left-button"
@@ -556,24 +481,14 @@ defineExpose({reGenerate, promptForm});
               <icon-bulb />
             </a-button>
             <a-button
-              v-if="showEditBox && (tools.length > 0 || currentTool)"
-              :disabled="chatLoading"
-              @click="changeTool"
-              class="chat-input-left-button"
-              :type="currentTool ? 'primary': undefined"
-              :status="currentTool ? 'warning' : undefined"
-            >
-              <icon-apps />
-            </a-button>
-            <a-button
-              v-if="uploadEnabled && showEditBox"
+              v-if="uploadEnabled && showEditBox && model?.config?.support_vision"
               :disabled="chatLoading"
               @click="customUpload"
               :type="promptForm.file ? 'primary': undefined"
               :status="promptForm.file ? 'warning' : undefined"
               class="chat-input-left-button"
             >
-              <icon-file />
+              <icon-image />
             </a-button>
           </a-space>
           <a-space>
@@ -633,57 +548,6 @@ defineExpose({reGenerate, promptForm});
         </a-spin>
       </a-form-item>
     </a-form>
-    <a-modal
-      v-model:visible="toolVisible"
-      :footer="false"
-      :esc-to-close="true"
-    >
-      <template #title>
-        <div style="text-align: left; width: 100%">
-          {{ $t('Tools') }}
-        </div>
-      </template>
-      <a-space
-        direction="vertical"
-        id="chat-input-tool-choose"
-      >
-        <a-select
-          :placeholder="$t('PleaseChooseTool')"
-          v-model="currentTool"
-        >
-          <a-option
-            v-for="item in tools"
-            :key="item.id"
-            :value="item.id"
-            :label="item.name"
-          />
-        </a-select>
-        <a-textarea
-          v-model="currentToolDesc"
-          :auto-size="{minRows: 3, maxRows: 10}"
-          :placeholder="$t('PleaseChooseTool')"
-        />
-        <div class="model-tool-tips">
-          {{ $t('ToolUseTips') }}
-        </div>
-        <a-space style="width: 100%; display: flex; justify-content: flex-end">
-          <a-button
-            v-if="currentTool"
-            type="primary"
-            status="warning"
-            @click="resetTool"
-          >
-            {{ $t('Remove') }}
-          </a-button>
-          <a-button
-            type="primary"
-            @click="doSubmitTool"
-          >
-            {{ $t('Save') }}
-          </a-button>
-        </a-space>
-      </a-space>
-    </a-modal>
     <a-modal
       v-model:visible="maxMessageVisible"
       :footer="false"
@@ -867,13 +731,11 @@ defineExpose({reGenerate, promptForm});
 
 .model-ignore-system-tips,
 .model-context-tips,
-.model-tool-tips,
 .model-price-tips {
   color: var(--color-neutral-6);
   font-size: 12px;
 }
 
-#chat-input-tool-choose,
 #chat-input-system-define-content > :deep(.arco-space-item) {
   width: 100%;
 }
