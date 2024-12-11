@@ -26,7 +26,7 @@ const props = defineProps({
 const store = useStore();
 const user = computed(() => store.state.user);
 
-const regex = /(\.jpg|\.png|\.jepg|\.webp)/;
+const regex = /(\.jpg|\.png|\.jpeg|\.webp|\.heif)/;
 
 const emits = defineEmits(['reGenerate', 'onImageClick']);
 
