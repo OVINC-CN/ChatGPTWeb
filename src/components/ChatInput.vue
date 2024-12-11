@@ -7,9 +7,8 @@ import {useStore} from 'vuex';
 import {useI18n} from 'vue-i18n';
 import globalContext from '../context';
 import {checkTCaptcha} from '@/utils/tcaptcha';
-import {extractFileAPI, extractFileStatusAPI, getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
+import {getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
 import {loadCOSClient} from '@/utils/cos';
-import {IconFile, IconDelete} from '@arco-design/web-vue/es/icon';
 import {listSystemPresetAPI} from '@/api/model';
 
 // props
@@ -344,56 +343,25 @@ const doUploadFile = (file) => {
                   Message.error(err.message);
                 } else {
                   const filePath = `${credentials.cos_url}/${credentials.key}`;
-                  const fileSuffix = credentials.key.split('.').pop();
-                  let signedFilePath = new URL(`${credentials.cos_url}/${credentials.key}`);
+                  const signedFilePath = new URL(`${credentials.cos_url}/${credentials.key}`);
                   if (credentials.cdn_sign) {
                     signedFilePath.searchParams.append(credentials.cdn_sign_param, credentials.cdn_sign);
                   }
                   if (credentials.image_format) {
                     signedFilePath.searchParams.append(credentials.image_format, '');
                   }
-                  signedFilePath = signedFilePath.toString();
-                  extractFileAPI(filePath).then(
-                      () => {
-                        checkExtractStatus(filePath, signedFilePath);
-                      },
-                      (err) => {
-                        emits('setChatLoading', false);
-                        Message.error(err.response.data.message);
-                      },
-                  );
+                  promptForm.value.file = filePath;
+                  promptForm.value.previewFile = signedFilePath.toString();
                 }
+                emits('setChatLoading', false);
               });
         },
         (err) => {
-          emits('setChatLoading', false);
           Message.error(err.response.data.message);
+          emits('setChatLoading', false);
         },
     );
   });
-};
-const checkExtractStatus = (filePath, signedFilePath) => {
-  setTimeout(() => {
-    extractFileStatusAPI(filePath).then(
-        (res) => {
-          if (res.data.is_finished) {
-            if (res.data.is_success) {
-              promptForm.value.file = filePath;
-              promptForm.value.previewFile = signedFilePath;
-            } else {
-              Message.error(i18n.t('ExtractFileFailed'));
-            }
-            emits('setChatLoading', false);
-          } else {
-            checkExtractStatus(filePath, signedFilePath);
-          }
-        },
-        (err) => {
-          emits('setChatLoading', false);
-          Message.error(err.response.data.message);
-        },
-    );
-  }, 2000);
 };
 
 // paste
@@ -407,7 +375,7 @@ const handlePaste = (e) => {
     const item = items[i];
     if (item.kind === 'file') {
       const file = item.getAsFile();
-      if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
+      if (file.type.indexOf('image/') !== -1) {
         doUploadFile(file);
       }
     }
@@ -445,7 +413,7 @@ const handleDrop = (e) => {
   if (files.length > 0) {
     const file = files[0];
     console.log(file.type);
-    if (file.type.indexOf('image/') !== -1 || file.type.indexOf('application/') !== -1 || file.type.indexOf('text/') !== -1 ) {
+    if (file.type.indexOf('image/') !== -1) {
       doUploadFile(file);
     }
   }
@@ -474,7 +442,7 @@ defineExpose({reGenerate, promptForm});
       ref="fileUploadInput"
       style="display: none"
       type="file"
-      accept="image/*, application/*, text/*"
+      accept="image/*"
       @change="handleFileChange"
     >
     <a-form
@@ -503,7 +471,7 @@ defineExpose({reGenerate, promptForm});
               <icon-robot />
             </a-button>
             <a-button
-              v-if="showEditBox"
+              v-if="showEditBox && model?.config?.support_system_define"
               :disabled="chatLoading"
               @click="changePreset"
               class="chat-input-left-button"
@@ -513,14 +481,14 @@ defineExpose({reGenerate, promptForm});
               <icon-bulb />
             </a-button>
             <a-button
-              v-if="uploadEnabled && showEditBox"
+              v-if="uploadEnabled && showEditBox && model?.config?.support_vision"
               :disabled="chatLoading"
               @click="customUpload"
               :type="promptForm.file ? 'primary': undefined"
               :status="promptForm.file ? 'warning' : undefined"
               class="chat-input-left-button"
             >
-              <icon-file />
+              <icon-image />
             </a-button>
           </a-space>
           <a-space>

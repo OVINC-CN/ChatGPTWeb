@@ -113,7 +113,7 @@ const onImageClick = (url) => {
     <div style="width: 60px; height: 60px">
       <img
         alt="ChatGPT Logo"
-        src="/chatgpt.png"
+        src="/favicon.png"
         style="max-width: 100%; max-height: 100%"
       >
     </div>

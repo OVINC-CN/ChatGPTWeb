@@ -15,9 +15,11 @@
             style="cursor: pointer"
             @click="goTo('Chat')"
           >
-            <div>
-              ChatGPT
-            </div>
+            <img
+              height="32px"
+              src="/logo.png"
+              alt="logo"
+            >
           </div>
           <a-space id="app-header-right">
             <icon-fullscreen-exit
