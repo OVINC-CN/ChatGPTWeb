@@ -59,6 +59,7 @@ const mEnUS = {
   Model: 'Model',
   PleaseChooseModel: 'Please choose Model',
   Desc: 'Description',
+  FileSizeTooLarge: 'File size is larger than {maxSize} MB',
 };
 
 export default mEnUS;

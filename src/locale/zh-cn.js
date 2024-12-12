@@ -59,6 +59,7 @@ const mZhCN = {
   Model: '模型',
   PleaseChooseModel: '请选择模型',
   Desc: '描述',
+  FileSizeTooLarge: '文件超出 {maxSize}MB 大小限制',
 };
 
 export default mZhCN;
