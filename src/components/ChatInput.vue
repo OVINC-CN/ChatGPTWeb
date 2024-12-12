@@ -308,7 +308,17 @@ onMounted(() => {
 
 // upload file
 const uploadEnabled = ref(false);
-onMounted(() => getCOSConfigAPI().then((res) => uploadEnabled.value = res.data.upload_file_enabled));
+const uploadMaxSize = ref(0);
+onMounted(
+    () => {
+      getCOSConfigAPI().then(
+          (res) => {
+            uploadEnabled.value = res.data.upload_file_enabled;
+            uploadMaxSize.value = res.data.upload_max_size;
+          },
+      );
+    },
+);
 const fileUploadInput = ref(null);
 const customUpload = () => {
   if (promptForm.value.file) {
@@ -325,6 +335,13 @@ const handleFileChange = (event) => {
 };
 const doUploadFile = (file) => {
   emits('setChatLoading', true);
+  if (file.size > uploadMaxSize.value) {
+    Message.warning(
+        i18n.t('FileSizeTooLarge', {maxSize: (uploadMaxSize.value / 1024.0 / 1024.0).toFixed(2)}),
+    );
+    emits('setChatLoading', false);
+    return;
+  }
   checkTCaptcha((ret) => {
     getCOSUploadTempKeyAPI(file.name, 'file-extract', ret).then(
         (res) => {
