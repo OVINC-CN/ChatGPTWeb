@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import ChatInput from '../components/ChatInput.vue';
 import {handleLoading} from '@/utils/loading';
 import MessageDisplay from '@/components/MessageDisplay.vue';
@@ -14,6 +14,17 @@ const currentMessageKey = 'local-message-id';
 const messageIDPrefix = 'local-message-';
 const localMessageStore = ref({});
 const localMessageStoreKey = 'local-message-store';
+const messageIDs = computed(() => {
+  return Object.entries(localMessageStore.value)
+      .sort(([, a], [, b]) => b.created_at - a.created_at)
+      .reduce(
+          (acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+          },
+          {},
+      );
+});
 const addMessage = (message) => {
   localMessages.value.push(message);
 };
@@ -25,7 +36,7 @@ const saveMessage = () => {
   localStorage.setItem(currentMessageID.value, JSON.stringify(localMessages.value));
   if (localMessageStore.value[currentMessageID.value] === undefined) {
     localMessageStore.value[currentMessageID.value] = {
-      created_at: moment().format('YY/MM/DD HH:mm'),
+      created_at: moment().unix(),
       title: extractQuestion(localMessages.value),
     };
     localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
@@ -64,7 +75,7 @@ onMounted(() => {
         localMessageStoreKey,
         JSON.stringify({
           [messageKey]: {
-            created_at: moment().format('YY/MM/DD HH:mm'),
+            created_at: moment().unix(),
             title: extractQuestion(JSON.parse(oldValue)),
           },
         }),
@@ -206,7 +217,10 @@ const setPromptForm = (data) => promptForm.value = data;
           </template>
           {{ $t('StartNewChat') }}
         </a-button>
-        <a-list v-if="Object.keys(localMessageStore).length > 0">
+        <a-list
+          v-if="Object.keys(localMessageStore).length > 0"
+          :max-height="320"
+        >
           <a-list-item
             v-for="(data, messageID) in localMessageStore"
             :key="messageID"
@@ -237,7 +251,7 @@ const setPromptForm = (data) => promptForm.value = data;
                 :size="4"
               >
                 <icon-clock-circle />
-                {{ data.created_at }}
+                {{ moment.unix(data.created_at).format('YY/MM/DD HH:mm') }}
               </a-space>
             </a-space>
           </a-list-item>
