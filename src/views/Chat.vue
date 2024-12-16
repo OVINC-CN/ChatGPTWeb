@@ -14,7 +14,7 @@ const currentMessageKey = 'local-message-id';
 const messageIDPrefix = 'local-message-';
 const localMessageStore = ref({});
 const localMessageStoreKey = 'local-message-store';
-const messageIDs = computed(() => {
+const sortedMessageStore = computed(() => {
   return Object.entries(localMessageStore.value)
       .sort(([, a], [, b]) => b.created_at - a.created_at)
       .reduce(
@@ -218,11 +218,11 @@ const setPromptForm = (data) => promptForm.value = data;
           {{ $t('StartNewChat') }}
         </a-button>
         <a-list
-          v-if="Object.keys(localMessageStore).length > 0"
+          v-if="Object.keys(sortedMessageStore).length > 0"
           :max-height="320"
         >
           <a-list-item
-            v-for="(data, messageID) in localMessageStore"
+            v-for="(data, messageID) in sortedMessageStore"
             :key="messageID"
           >
             <template #extra>
