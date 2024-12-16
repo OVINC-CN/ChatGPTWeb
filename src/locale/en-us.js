@@ -60,6 +60,8 @@ const mEnUS = {
   PleaseChooseModel: 'Please choose Model',
   Desc: 'Description',
   FileSizeTooLarge: 'File size is larger than {maxSize} MB',
+  ChatMessageHistory: 'History Messages',
+  StartNewChat: 'New Chat',
 };
 
 export default mEnUS;

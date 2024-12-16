@@ -32,7 +32,18 @@ const props = defineProps({
 });
 
 // emits
-const emits = defineEmits(['addMessage', 'setChatLoading', 'saveMessage', 'clearMessages', 'toggleUserBehavior', 'replaceMessages', 'setPromptForm', 'setSystemDefine']);
+const emits = defineEmits(
+    [
+      'addMessage',
+      'setChatLoading',
+      'saveMessage',
+      'toggleUserBehavior',
+      'replaceMessages',
+      'setPromptForm',
+      'setSystemDefine',
+      'showHistory',
+    ],
+);
 
 // i18n
 const i18n = useI18n();
@@ -285,6 +296,9 @@ watch(() => presetVisible.value, () => {
   }
 });
 
+// history
+const showHistory = () => emits('showHistory');
+
 // message length
 const maxMessageVisible = ref(false);
 const messageLength = ref([0, 32]);
@@ -512,10 +526,10 @@ defineExpose({reGenerate, promptForm});
             <a-button
               v-if="showEditBox"
               :disabled="chatLoading"
-              @click="emits('clearMessages')"
+              @click="showHistory"
               class="chat-input-left-button"
             >
-              <icon-delete />
+              <icon-history />
             </a-button>
             <a-button
               v-if="showEditBox"
@@ -523,12 +537,7 @@ defineExpose({reGenerate, promptForm});
               @click="showMaxMessage"
               class="chat-input-left-button"
             >
-              <a-space :size="2">
-                <icon-history />
-                <span>
-                  {{ maxMessage }}
-                </span>
-              </a-space>
+              <icon-layers />
             </a-button>
             <a-button
               v-if="showEditBox"
