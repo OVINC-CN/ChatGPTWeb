@@ -43,7 +43,7 @@ const mZhCN = {
   CompletionTokens: '响应令牌数',
   Price: '计费',
   RequestTime: '请求时间',
-  ChatHistory: '历史计费',
+  ChatHistory: '历史会话',
   Charge: '充值',
   Refresh: '刷新',
   Amount: '金额',
@@ -60,6 +60,8 @@ const mZhCN = {
   PleaseChooseModel: '请选择模型',
   Desc: '描述',
   FileSizeTooLarge: '文件超出 {maxSize}MB 大小限制',
+  ChatMessageHistory: '历史会话',
+  StartNewChat: '新建会话',
 };
 
 export default mZhCN;
