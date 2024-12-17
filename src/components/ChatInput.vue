@@ -388,8 +388,8 @@ const doUploadFile = (file) => {
               });
         },
         (err) => {
-          Message.error(err.response.data.message);
           emits('setChatLoading', false);
+          Message.error(err.response.data.message);
         },
     );
   });
