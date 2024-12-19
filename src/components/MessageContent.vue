@@ -143,9 +143,16 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 }
 
 .v-md-preview :deep(.github-markdown-body) pre {
-  padding: 20px;
+  padding: 10px;
   background: var(--color-fill-3);
-  margin: 20px 0;
+  margin: 10px 0;
+  border-radius: var(--border-radius-medium);
+}
+
+.v-md-preview :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
+  background: var(--color-fill-3);
+  border-radius: var(--border-radius-medium);
+  overflow: hidden;
 }
 
 .message-content-content-icon-refresh {
