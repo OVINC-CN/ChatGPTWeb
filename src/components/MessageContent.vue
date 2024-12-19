@@ -54,7 +54,8 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
     <div
       class="message-content-content"
       :style="{
-        background: message.role === Role.System ? 'rgb(var(--orange-1)' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--arcoblue-1))',
+        background: message.role === Role.System ? 'rgb(var(--danger-4))' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--primary-5))',
+        color: message.role === Role.Assistant ? 'unset' : 'white',
         textAlign: 'left'
       }"
     >
@@ -65,17 +66,13 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
         <icon-bulb />
         {{ $t('SystemDefine') }}
       </div>
-      <v-md-preview
-        v-show="message.content"
-        :text="message.content"
-        class="v-md-preview"
-        @image-click="onImageClick"
-      />
-      <div v-if="message.previewFile">
+      <div
+        v-if="message.file && message.previewFile"
+        class="message-content-content-img"
+      >
         <a-image
           v-if="regex.test(message.file)"
           :src="message.previewFile"
-          width="200px"
           height="200px"
           fit="cover"
         />
@@ -93,6 +90,12 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
           </a-space>
         </a-link>
       </div>
+      <v-md-preview
+        v-show="message.content"
+        :text="message.content"
+        class="v-md-preview"
+        @image-click="onImageClick"
+      />
       <icon-loading v-show="isLast && chatLoading && !message.content" />
     </div>
     <a-avatar
@@ -119,8 +122,15 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 .message-content-content {
   padding: 10px;
   box-sizing: border-box;
-  border-radius: var(--border-radius-small);
+  border-radius: var(--border-radius-large);
   overflow-x: auto;
+  box-shadow: var(--shadow-special);
+}
+
+.message-content-content-img {
+  border-radius: var(--border-radius-large);
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .v-md-preview :deep(.github-markdown-body) {

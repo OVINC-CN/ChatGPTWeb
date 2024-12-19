@@ -240,4 +240,16 @@ onMounted(() => initRUM());
   font-size: 24px!important;
   font-weight: unset!important;
 }
+
+.arco-btn-size-medium,
+.arco-modal,
+.arco-select-view-single,
+.arco-descriptions-border .arco-descriptions-body,
+.arco-textarea-wrapper,
+.arco-list,
+.arco-input-number,
+.arco-select-dropdown {
+  border-radius: var(--border-radius-large) !important;
+  overflow: hidden;
+}
 </style>

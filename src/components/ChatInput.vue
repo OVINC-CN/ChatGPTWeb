@@ -63,7 +63,7 @@ const walletConfig = computed(() => store.state.walletConfig);
 const currentModel = ref('');
 const model = ref({});
 const previewModelData = computed(() => {
-  return [
+  const data = [
     {
       label: i18n.t('PromptUnitPrice'),
       value: model.value.prompt_price ? `${model.value.prompt_price}${walletConfig.value.unit}` : '',
@@ -75,6 +75,16 @@ const previewModelData = computed(() => {
       span: 1,
     },
   ];
+  if (model.value.config?.support_vision) {
+    data.push(
+        {
+          label: i18n.t('VisionUnitPrice'),
+          value: model.value.vision_price ? `${model.value.vision_price}${walletConfig.value.unit}` : '',
+          span: 2,
+        },
+    );
+  }
+  return data;
 });
 const allModels = computed(() => store.state.models);
 const localModelKey = ref('local-model');
@@ -483,6 +493,7 @@ defineExpose({reGenerate, promptForm});
       <a-form-item
         hide-label
         id="chat-input-submit-button"
+        style="margin-bottom: 10px"
       >
         <a-space style="display: flex; width: 100%; justify-content: space-between;">
           <a-space>
@@ -680,13 +691,43 @@ defineExpose({reGenerate, promptForm});
           @change="previewModel"
           :placeholder="$t('PleaseChooseModel')"
           v-model="currentModel"
+          allow-search
         >
           <a-option
             v-for="item in allModels"
             :key="item.id"
             :value="item.id"
             :label="item.name"
-          />
+          >
+            <a-space
+              :size="2"
+            >
+              <span>
+                {{ item.name }}
+              </span>
+              <a-tag
+                v-if="item.config.support_system_define"
+                size="small"
+                color="orange"
+              >
+                {{ $t('SupportSystemDefine') }}
+              </a-tag>
+              <a-tag
+                v-if="item.config.support_vision"
+                size="small"
+                color="blue"
+              >
+                {{ $t('SupportVision') }}
+              </a-tag>
+              <a-tag
+                v-if="item.config.is_vision"
+                size="small"
+                color="magenta"
+              >
+                {{ $t('SupportImageGenerate') }}
+              </a-tag>
+            </a-space>
+          </a-option>
         </a-select>
         <a-descriptions
           layout="inline-vertical"
@@ -708,7 +749,7 @@ defineExpose({reGenerate, promptForm});
           </template>
         </a-descriptions>
         <div class="model-price-tips">
-          {{ $t('PriceUnitTips') }}
+          {{ model.config?.support_vision ? $t('PriceUnitTips') : $t('PriceUnitTips2') }}
         </div>
         <a-space style="width: 100%; display: flex; justify-content: flex-end">
           <a-button
@@ -764,5 +805,14 @@ defineExpose({reGenerate, promptForm});
 
 #chat-input-system-define-content > :deep(.arco-space-item) {
   width: 100%;
+}
+
+.model-select-extra-tip {
+  font-size: 14px;
+  color: var(--color-text-3);
+}
+
+#chat-input-textarea {
+  box-shadow: var(--shadow-special);
 }
 </style>

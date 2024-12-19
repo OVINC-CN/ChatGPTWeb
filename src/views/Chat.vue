@@ -213,7 +213,7 @@ const setPromptForm = (data) => promptForm.value = data;
           style="width: 100%"
         >
           <template #icon>
-            <icon-plus />
+            <icon-plus :style="{ fontSize: '14px' }" />
           </template>
           {{ $t('StartNewChat') }}
         </a-button>
@@ -234,7 +234,7 @@ const setPromptForm = (data) => promptForm.value = data;
                 :disabled="chatLoading"
               >
                 <template #icon>
-                  <icon-delete />
+                  <icon-delete style="color: var(--color-danger-light-4)" />
                 </template>
               </a-button>
             </template>
