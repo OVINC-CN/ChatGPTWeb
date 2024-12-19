@@ -64,6 +64,9 @@ const mZhCN = {
   FileSizeTooLarge: '文件超出 {maxSize}MB 大小限制',
   ChatMessageHistory: '历史会话',
   StartNewChat: '新建会话',
+  SupportSystemDefine: '预设',
+  SupportVision: '视觉',
+  SupportImageGenerate: '图片生成',
 };
 
 export default mZhCN;

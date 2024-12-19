@@ -247,7 +247,8 @@ onMounted(() => initRUM());
 .arco-descriptions-border .arco-descriptions-body,
 .arco-textarea-wrapper,
 .arco-list,
-.arco-input-number {
+.arco-input-number,
+.arco-select-dropdown {
   border-radius: var(--border-radius-large) !important;
   overflow: hidden;
 }

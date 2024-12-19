@@ -691,13 +691,43 @@ defineExpose({reGenerate, promptForm});
           @change="previewModel"
           :placeholder="$t('PleaseChooseModel')"
           v-model="currentModel"
+          allow-search
         >
           <a-option
             v-for="item in allModels"
             :key="item.id"
             :value="item.id"
             :label="item.name"
-          />
+          >
+            <a-space
+              :size="2"
+            >
+              <span>
+                {{ item.name }}
+              </span>
+              <a-tag
+                v-if="item.config.support_system_define"
+                size="small"
+                color="orange"
+              >
+                {{ $t('SupportSystemDefine') }}
+              </a-tag>
+              <a-tag
+                v-if="item.config.support_vision"
+                size="small"
+                color="blue"
+              >
+                {{ $t('SupportVision') }}
+              </a-tag>
+              <a-tag
+                v-if="item.config.is_vision"
+                size="small"
+                color="magenta"
+              >
+                {{ $t('SupportImageGenerate') }}
+              </a-tag>
+            </a-space>
+          </a-option>
         </a-select>
         <a-descriptions
           layout="inline-vertical"
@@ -775,5 +805,14 @@ defineExpose({reGenerate, promptForm});
 
 #chat-input-system-define-content > :deep(.arco-space-item) {
   width: 100%;
+}
+
+.model-select-extra-tip {
+  font-size: 14px;
+  color: var(--color-text-3);
+}
+
+#chat-input-textarea {
+  box-shadow: var(--shadow-special);
 }
 </style>
