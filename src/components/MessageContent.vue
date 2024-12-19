@@ -54,7 +54,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
     <div
       class="message-content-content"
       :style="{
-        background: message.role === Role.System ? 'rgb(var(--warning-6))' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--primary-5))',
+        background: message.role === Role.System ? 'rgb(var(--danger-4))' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--primary-5))',
         color: message.role === Role.Assistant ? 'unset' : 'white',
         textAlign: 'left'
       }"
