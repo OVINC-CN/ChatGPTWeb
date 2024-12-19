@@ -176,7 +176,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 
 .v-md-preview-u :deep(.github-markdown-body) code,
 .v-md-preview-u :deep(.github-markdown-body) pre,
-.v-md-preview :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
+.v-md-preview-u :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
   background: rgb(var(--arcoblue-1));
 }
 
