@@ -94,7 +94,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
-        :class="{'v-md-preview-u': Role.User || message.role === Role.System}"
+        :class="{'v-md-preview-u': message.role === Role.User || message.role === Role.System}"
         @image-click="onImageClick"
       />
       <icon-loading v-show="isLast && chatLoading && !message.content" />
