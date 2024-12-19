@@ -94,6 +94,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
+        :class="{'v-md-preview-u': message.role === Role.User || message.role === Role.System}"
         @image-click="onImageClick"
       />
       <icon-loading v-show="isLast && chatLoading && !message.content" />
@@ -143,9 +144,44 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 }
 
 .v-md-preview :deep(.github-markdown-body) pre {
-  padding: 20px;
+  padding: 10px;
   background: var(--color-fill-3);
-  margin: 20px 0;
+  margin: 10px 0;
+  border-radius: var(--border-radius-medium);
+}
+
+.v-md-preview :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
+  background: var(--color-fill-3);
+  border-radius: var(--border-radius-medium);
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.v-md-preview-u :deep(.github-markdown-body) a {
+  color: white;
+  text-decoration: underline;
+}
+
+.v-md-preview-u :deep(.github-markdown-body) h6 {
+  color: unset;
+}
+
+.v-md-preview-u :deep(.github-markdown-body) blockquote {
+  color: var(--color-text-4);
+}
+
+.v-md-preview-u :deep(.github-markdown-body) table {
+  color: var(--color-text-1);
+}
+
+.v-md-preview-u :deep(.github-markdown-body) code,
+.v-md-preview-u :deep(.github-markdown-body) pre,
+.v-md-preview-u :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
+  background: rgb(var(--arcoblue-1));
+}
+
+.v-md-preview-u :deep(.github-markdown-body) code {
+  color: var(--color-text-1);
 }
 
 .message-content-content-icon-refresh {
