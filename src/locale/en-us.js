@@ -67,6 +67,7 @@ const mEnUS = {
   LocalStorageQuotaExceededError: 'The temp storage space is full, please delete some historical messages',
   QuotaExceededError: 'Quota Exceeded',
   TempStorageUsed: 'Temporary storage used: {total} MB, maximum capacity varies by browser',
+  NewVersionOfStaticPage: 'A new version of the page is available. Refresh to load the latest version ?',
 };
 
 export default mEnUS;
