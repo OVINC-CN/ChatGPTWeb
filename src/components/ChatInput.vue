@@ -548,7 +548,10 @@ defineExpose({reGenerate, promptForm});
               @click="showMaxMessage"
               class="chat-input-left-button"
             >
-              <icon-layers />
+              <a-space :size="0">
+                <icon-layers />
+                <span>{{ maxMessage }}</span>
+              </a-space>
             </a-button>
             <a-button
               v-if="showEditBox"
