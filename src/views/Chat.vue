@@ -5,6 +5,7 @@ import {handleLoading} from '@/utils/loading';
 import MessageDisplay from '@/components/MessageDisplay.vue';
 import moment from 'moment';
 import {Role} from '@/constants';
+import {getLocalStorageSize, setLocalStorage} from '@/utils/local_storage';
 
 // message
 const oldLocalMessageKey = 'local-message';
@@ -32,23 +33,23 @@ const replaceMessages = (messages) => {
   localMessages.value = messages;
 };
 const saveMessage = () => {
-  localStorage.setItem(currentMessageKey, JSON.stringify(currentMessageID.value));
-  localStorage.setItem(currentMessageID.value, JSON.stringify(localMessages.value));
+  setLocalStorage(currentMessageKey, JSON.stringify(currentMessageID.value));
+  setLocalStorage(currentMessageID.value, JSON.stringify(localMessages.value));
   if (localMessageStore.value[currentMessageID.value] === undefined) {
     localMessageStore.value[currentMessageID.value] = {
       created_at: moment().unix(),
       title: extractQuestion(localMessages.value),
     };
-    localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
+    setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
   } else if (!localMessageStore.value[currentMessageID.value]['title']) {
     localMessageStore.value[currentMessageID.value]['title'] = extractQuestion(localMessages.value);
-    localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
+    setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
   }
 };
 const removeMessage = (messageKey) => {
   localStorage.removeItem(messageKey);
   delete localMessageStore.value[messageKey];
-  localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
+  setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
   if (currentMessageID.value === messageKey) {
     localMessages.value = [];
     localStorage.removeItem(currentMessageKey);
@@ -63,15 +64,15 @@ const changeCurrentMessage = (messageID) => {
   historyVisible.value = false;
   currentMessageID.value = messageID;
   localMessages.value = JSON.parse(localStorage.getItem(currentMessageID.value));
-  localStorage.setItem(currentMessageKey, JSON.stringify(currentMessageID.value));
+  setLocalStorage(currentMessageKey, JSON.stringify(currentMessageID.value));
 };
 onMounted(() => {
   // parse old data
   const oldValue = localStorage.getItem(oldLocalMessageKey);
   if (oldValue) {
     const messageKey = generateMessageID();
-    localStorage.setItem(messageKey, oldValue);
-    localStorage.setItem(
+    setLocalStorage(messageKey, oldValue);
+    setLocalStorage(
         localMessageStoreKey,
         JSON.stringify({
           [messageKey]: {
@@ -126,6 +127,10 @@ const extractQuestion = (messages) => {
   return '';
 };
 const generateMessageID = () => `${messageIDPrefix}${moment().unix()}`;
+const localStorageSize = ref(0);
+const onHistoryOpen = () => {
+  localStorageSize.value = getLocalStorageSize();
+};
 
 // loading
 const chatLoading = ref(false);
@@ -136,7 +141,7 @@ const localSystemDefineKey = ref('local-system-define');
 const systemDefine = ref('');
 const setSystemDefine = (define) => {
   systemDefine.value = define;
-  localStorage.setItem(localSystemDefineKey.value, JSON.stringify(define));
+  setLocalStorage(localSystemDefineKey.value, JSON.stringify(define));
 };
 onMounted(() => {
   const value = localStorage.getItem(localSystemDefineKey.value);
@@ -197,6 +202,7 @@ const setPromptForm = (data) => promptForm.value = data;
       v-model:visible="historyVisible"
       :esc-to-close="true"
       :footer="false"
+      @before-open="onHistoryOpen"
     >
       <template #title>
         <div style="text-align: left; width: 100%">
@@ -256,6 +262,9 @@ const setPromptForm = (data) => promptForm.value = data;
             </a-space>
           </a-list-item>
         </a-list>
+        <div style="width: 100%; text-align: center; color: var(--color-text-3); font-size: 12px">
+          {{ $t('TempStorageUsed', {total: (localStorageSize / 1024 / 1024).toFixed(3)}) }}
+        </div>
       </a-space>
     </a-modal>
   </div>

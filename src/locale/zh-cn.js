@@ -67,6 +67,9 @@ const mZhCN = {
   SupportSystemDefine: '预设',
   SupportVision: '视觉',
   SupportImageGenerate: '图片生成',
+  LocalStorageQuotaExceededError: '临时存储空间已满，请删除部分历史会话',
+  QuotaExceededError: '临时存储空间已满',
+  TempStorageUsed: '已使用临时存储空间 {total} MB，可用空间上限因浏览器而异',
 };
 
 export default mZhCN;
