@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
 import {useStore} from 'vuex';
 import {locale, langOption, changeLangAndReload} from './locale';
 import {useI18n} from 'vue-i18n';
@@ -153,6 +153,32 @@ const initRUM = () => {
       });
 };
 onMounted(() => initRUM());
+
+// watch static file change
+const staticFileEtagKey = 'static-page-etag';
+const watchStaticFileChange = ref(null);
+onMounted(() => {
+  watchStaticFileChange.value = setInterval(
+      () => {
+        try {
+          fetch(window.location.href, {method: 'HEAD'})
+              .then((res) => {
+                const serverETag = res.headers.get('ETag');
+                const localETag = localStorage.getItem(staticFileEtagKey);
+                if (localETag && serverETag && localETag !== serverETag) {
+                  if (confirm(i18n.t('NewVersionOfStaticPage'))) {
+                    location.reload();
+                  }
+                }
+                setLocalStorage(staticFileEtagKey, serverETag);
+              });
+        } catch (e) {
+          console.log('fetch static file failed', e);
+        }
+      }, 60 * 10 * 1000,
+  );
+});
+onUnmounted(() => clearInterval(watchStaticFileChange.value));
 </script>
 
 <style>
