@@ -10,6 +10,7 @@ import {checkTCaptcha} from '@/utils/tcaptcha';
 import {getCOSConfigAPI, getCOSUploadTempKeyAPI} from '@/api/cos';
 import {loadCOSClient} from '@/utils/cos';
 import {listSystemPresetAPI} from '@/api/model';
+import {setLocalStorage} from '@/utils/local_storage';
 
 // props
 const props = defineProps({
@@ -122,7 +123,7 @@ const changeModel = () => {
   if (!currentModel.value) {
     return;
   }
-  localStorage.setItem(localModelKey.value, currentModel.value);
+  setLocalStorage(localModelKey.value, currentModel.value);
   hideSelectModel();
 };
 const previewModel = () => {
@@ -317,7 +318,7 @@ watch(() => maxMessage.value, () => {
   if (maxMessage.value % 2 !== 0) {
     maxMessage.value++;
   }
-  localStorage.setItem(localMaxMessageKey.value, JSON.stringify(maxMessage.value));
+  setLocalStorage(localMaxMessageKey.value, JSON.stringify(maxMessage.value));
 });
 const showMaxMessage = () => maxMessageVisible.value = true;
 const localMaxMessageKey = ref('local-max-message');

@@ -64,6 +64,9 @@ const mEnUS = {
   FileSizeTooLarge: 'File size is larger than {maxSize} MB',
   ChatMessageHistory: 'History Messages',
   StartNewChat: 'New Chat',
+  LocalStorageQuotaExceededError: 'The temp storage space is full, please delete some historical messages',
+  QuotaExceededError: 'Quota Exceeded',
+  TempStorageUsed: 'Temporary storage used: {total} MB, maximum capacity varies by browser',
 };
 
 export default mEnUS;

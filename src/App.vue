@@ -88,13 +88,14 @@ import Aegis from 'aegis-web-sdk';
 import {getRUMConfigAPI} from './api/trace';
 import UserCharge from '@/components/UserCharge.vue';
 import UserInfo from '@/components/UserInfo.vue';
+import {setLocalStorage} from '@/utils/local_storage';
 
 // display
 const fullScreen = ref(true);
 const fullScreenKey = ref('full-screen');
 const toggleFullScreen = () => {
   fullScreen.value = !fullScreen.value;
-  localStorage.setItem(fullScreenKey.value, fullScreen.value ? 'true' : 'false');
+  setLocalStorage(fullScreenKey.value, fullScreen.value ? 'true' : 'false');
 };
 onMounted(() => {
   fullScreen.value = localStorage.getItem(fullScreenKey.value) === 'true';
