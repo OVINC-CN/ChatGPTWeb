@@ -226,6 +226,7 @@ const showCharge = () => {
               <div style="color: var(--color-neutral-10)">
                 <div>{{ $t('PromptTokens') }}:&nbsp;{{ record.prompt_tokens }}</div>
                 <div>{{ $t('CompletionTokens') }}:&nbsp;{{ record.completion_tokens }}</div>
+                <div>{{ $t('VisionCount') }}:&nbsp;{{ record.vision_count }}</div>
               </div>
             </template>
           </a-tooltip>
@@ -240,6 +241,8 @@ const showCharge = () => {
                 (
                   record.prompt_tokens * record.prompt_token_unit_price / 1000
                   + record.completion_tokens * record.completion_token_unit_price / 1000
+                  + record.vision_count * record.vision_unit_price / 1000
+                  + record.request_unit_price / 1000
                 ).toFixed(4)
               }}
             </a-button>
@@ -247,6 +250,8 @@ const showCharge = () => {
               <div style="color: var(--color-neutral-10)">
                 <div>{{ $t('PromptPrice') }}:&nbsp;{{ (record.prompt_tokens * record.prompt_token_unit_price / 1000).toFixed(4) }}</div>
                 <div>{{ $t('CompletionPrice') }}:&nbsp;{{ (record.completion_tokens * record.completion_token_unit_price / 1000).toFixed(4) }}</div>
+                <div>{{ $t('VisionPrice') }}:&nbsp;{{ (record.vision_count * record.vision_unit_price / 1000).toFixed(4) }}</div>
+                <div>{{ $t('RequestPrice') }}:&nbsp;{{ (record.request_unit_price / 1000).toFixed(4) }}</div>
               </div>
             </template>
           </a-tooltip>

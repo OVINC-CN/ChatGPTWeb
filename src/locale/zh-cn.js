@@ -56,8 +56,8 @@ const mZhCN = {
   PromptUnitPrice: '提示计费/单元',
   CompletionUnitPrice: '响应计费/单元',
   VisionUnitPrice: '视觉计费/单元',
-  PriceUnitTips: '每单元为1000Token的文本或1000张图片；图像识别(视觉)费用会合并到提示计费中',
-  PriceUnitTips2: '每单元为1000Token的文本或1000张图片',
+  RequestUnitPrice: '请求计费/单元',
+  PriceUnitTips: '每单元为1000Token的文本或1000张图片或1000次请求',
   Model: '模型',
   PleaseChooseModel: '请选择模型',
   Desc: '描述',
@@ -71,6 +71,9 @@ const mZhCN = {
   QuotaExceededError: '临时存储空间已满',
   TempStorageUsed: '已使用临时存储空间 {total} MB，可用空间上限因浏览器而异',
   NewVersionOfStaticPage: '当前网页有新版本可用，是否刷新以加载最新内容？',
+  VisionCount: '视觉令牌数',
+  VisionPrice: '视觉计费',
+  RequestPrice: '请求计费',
 };
 
 export default mZhCN;
