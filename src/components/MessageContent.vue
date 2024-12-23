@@ -157,6 +157,19 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
   margin: 10px 0;
 }
 
+.v-md-preview :deep(.github-markdown-body) blockquote {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.v-md-preview :deep(.v-md-plugin-tip) {
+  color: var(--color-text-1);
+}
+
+.v-md-preview :deep(.v-md-plugin-tip.warning) {
+  background-color: rgb(var(--orange-1));
+}
+
 .v-md-preview-u :deep(.github-markdown-body) a {
   color: white;
   text-decoration: underline;
