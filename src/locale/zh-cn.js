@@ -74,6 +74,16 @@ const mZhCN = {
   VisionCount: '视觉令牌数',
   VisionPrice: '视觉计费',
   RequestPrice: '请求计费',
+  UserInfoButtonGuide: '查看余额与历史计费',
+  NextStep: '下一步',
+  PreviousStep: '上一步',
+  Done: '完成',
+  ChangeModelButtonGuide: '切换当前会话所使用的大语言模型（LLM），以满足不同任务需求',
+  SystemDefineButtonGuide: '系统预设是为大语言模型提供的初始指令或角色设定，帮助其更精准地完成特定场景任务',
+  UploadImage: '图片上传',
+  UploadImageButtonGuide: '对于支持视觉的大语言模型，可上传图片进行内容识别、分析或辅助回答',
+  ChatMessageHistoryButtonGuide: '针对不同主题或问题，建议新建会话，以避免上下文（对话历史）干扰导致模型输出不准确',
+  MaxMessagesCountButtonGuide: '单个会话的上下文消息数量限制。上下文是指模型在当前会话中记住的对话历史，可帮助模型更好地理解用户意图并生成更相关的回复，但同时会增加计算成本',
 };
 
 export default mZhCN;
