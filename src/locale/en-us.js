@@ -74,6 +74,16 @@ const mEnUS = {
   VisionCount: 'Vision Tokens',
   VisionPrice: 'Vision Price',
   RequestPrice: 'Request Price',
+  UserInfoButtonGuide: 'View Balance and Billing History',
+  NextStep: 'Next',
+  PreviousStep: 'Previous',
+  Done: 'Done',
+  ChangeModelButtonGuide: 'Switch the LLM used in the current session to suit different task requirements',
+  SystemDefineButtonGuide: 'The system prompt is an initial instruction or role setting provided to the LLM, enabling it to perform specific tasks more accurately',
+  UploadImage: 'Upload Image',
+  UploadImageButtonGuide: 'For multimodal models (text + vision), you can upload images for content recognition, analysis, or to assist in generating responses',
+  ChatMessageHistoryButtonGuide: 'For different topics or questions, it is recommended to start a new session to avoid context (conversation history) interference that may lead to inaccurate outputs',
+  MaxMessagesCountButtonGuide: 'The limit on the number of context messages in a single session. Context refers to the conversation history remembered by the model, which helps it better understand user intent and generate more relevant responses, but it also increases computational costs',
 };
 
 export default mEnUS;

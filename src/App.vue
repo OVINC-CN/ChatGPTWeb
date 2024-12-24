@@ -22,6 +22,10 @@
             >
           </div>
           <a-space id="app-header-right">
+            <icon-question
+              style="font-weight: bold; margin-right: 10px; cursor: pointer"
+              @click="startGuide"
+            />
             <icon-fullscreen-exit
               v-if="fullScreen"
               style="font-weight: bold; margin-right: 10px; cursor: pointer"
@@ -48,6 +52,7 @@
               type="text"
               style="padding: 0; color: unset"
               @click="showUserInfo"
+              id="user-info"
             >
               <a-badge
                 status="success"
@@ -89,6 +94,7 @@ import {getRUMConfigAPI} from './api/trace';
 import UserCharge from '@/components/UserCharge.vue';
 import UserInfo from '@/components/UserInfo.vue';
 import {setLocalStorage} from '@/utils/local_storage';
+import introJs from 'intro.js';
 
 // display
 const fullScreen = ref(true);
@@ -179,10 +185,61 @@ onMounted(() => {
   );
 });
 onUnmounted(() => clearInterval(watchStaticFileChange.value));
+
+// guide
+const startGuide = () => {
+  introJs()
+      .setOptions({
+        steps: [
+          {
+            element: '#user-info',
+            title: i18n.t('UserInfo'),
+            intro: i18n.t('UserInfoButtonGuide'),
+          },
+          {
+            element: '#change-model-button',
+            title: i18n.t('Model'),
+            intro: i18n.t('ChangeModelButtonGuide'),
+          },
+          {
+            element: '#system-define-button',
+            title: i18n.t('SystemDefine'),
+            intro: i18n.t('SystemDefineButtonGuide'),
+          },
+          {
+            element: '#upload-image-button',
+            title: i18n.t('UploadImage'),
+            intro: i18n.t('UploadImageButtonGuide'),
+          },
+          {
+            element: '#history-message-button',
+            title: i18n.t('ChatMessageHistory'),
+            intro: i18n.t('ChatMessageHistoryButtonGuide'),
+          },
+          {
+            element: '#max-message-button',
+            title: i18n.t('MaxMessagesCount'),
+            intro: i18n.t('MaxMessagesCountButtonGuide'),
+          },
+        ],
+        disableInteraction: true,
+        showStepNumbers: true,
+        exitOnOverlayClick: false,
+        showBullets: false,
+        showProgress: false,
+        tooltipClass: 'user-guide',
+        nextLabel: i18n.t('NextStep'),
+        prevLabel: i18n.t('PreviousStep'),
+        doneLabel: i18n.t('Done'),
+      })
+      .start();
+};
 </script>
 
 <style>
 @import "App.css";
+@import 'intro.js/introjs.css';
+@import "intro.js/themes/introjs-modern.css";
 
 #app {
   display: flex;
@@ -278,5 +335,32 @@ onUnmounted(() => clearInterval(watchStaticFileChange.value));
 .arco-select-dropdown {
   border-radius: var(--border-radius-large) !important;
   overflow: hidden;
+}
+
+.introjs-helperLayer {
+  box-shadow: rgb(var(--arcoblue-4)) 0 0 1px 2px, rgba(33, 33, 33, 0.5) 0 0 0 5000px !important;
+}
+
+.user-guide .introjs-tooltip-header {
+  padding: 10px;
+}
+
+.user-guide .introjs-tooltip-header .introjs-tooltip-title {
+  font-size: 16px;
+}
+
+.user-guide .introjs-tooltip-header .introjs-skipbutton {
+  height: 41px;
+  width: 41px;
+  line-height: 41px;
+  color: white;
+}
+
+.user-guide .introjs-tooltiptext {
+  padding: 10px;
+}
+
+.user-guide .introjs-helperNumberLayer {
+  display: none;
 }
 </style>

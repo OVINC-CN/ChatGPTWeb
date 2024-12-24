@@ -510,26 +510,29 @@ defineExpose({reGenerate, promptForm});
               :disabled="chatLoading"
               class="chat-input-left-button"
               @click="showModelSelect"
+              id="change-model-button"
             >
               <icon-robot />
             </a-button>
             <a-button
-              v-if="showEditBox && model?.config?.support_system_define"
-              :disabled="chatLoading"
+              v-if="showEditBox"
+              :disabled="chatLoading || !model?.config?.support_system_define"
               @click="changePreset"
               class="chat-input-left-button"
               :type="props.systemDefine ? 'primary': undefined"
               :status="props.systemDefine ? 'warning' : undefined"
+              id="system-define-button"
             >
               <icon-bulb />
             </a-button>
             <a-button
-              v-if="uploadEnabled && showEditBox && model?.config?.support_vision"
-              :disabled="chatLoading"
+              v-if="showEditBox"
+              :disabled="!uploadEnabled || chatLoading || !model?.config?.support_vision"
               @click="customUpload"
               :type="promptForm.file ? 'primary': undefined"
               :status="promptForm.file ? 'warning' : undefined"
               class="chat-input-left-button"
+              id="upload-image-button"
             >
               <icon-image />
             </a-button>
@@ -540,6 +543,7 @@ defineExpose({reGenerate, promptForm});
               :disabled="chatLoading"
               @click="showHistory"
               class="chat-input-left-button"
+              id="history-message-button"
             >
               <icon-history />
             </a-button>
@@ -548,6 +552,7 @@ defineExpose({reGenerate, promptForm});
               :disabled="chatLoading"
               @click="showMaxMessage"
               class="chat-input-left-button"
+              id="max-message-button"
             >
               <a-space :size="0">
                 <icon-layers />
