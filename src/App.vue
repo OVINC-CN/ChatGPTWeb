@@ -363,4 +363,8 @@ const startGuide = () => {
 .user-guide .introjs-helperNumberLayer {
   display: none;
 }
+
+.introjs-tooltipReferenceLayer {
+  visibility: visible;
+}
 </style>
