@@ -215,6 +215,7 @@ const initWebSocket = () => {
   };
   webSocket.value.onclose = () => {
     emits('setChatLoading', false);
+    emits('toggleUserBehavior', false);
   };
   return new Promise((resolve, reject) => {
     webSocket.value.onopen = (e) => {
