@@ -708,33 +708,44 @@ defineExpose({reGenerate, promptForm});
             :value="item.id"
             :label="item.name"
           >
-            <a-space
-              :size="2"
-            >
-              <span>
+            <a-space :size="8">
+              <a-space
+                class="model-select-model-detail-space"
+                :size="8"
+              >
+                <div>
+                  <a-avatar
+                    style="background: unset;"
+                    :size="18"
+                    :image-url="item.icon || '/favicon.ico'"
+                    object-fit="cover"
+                  />
+                </div>
                 {{ item.name }}
-              </span>
-              <a-tag
-                v-if="item.config.support_system_define"
-                size="small"
-                color="orange"
-              >
-                {{ $t('SupportSystemDefine') }}
-              </a-tag>
-              <a-tag
-                v-if="item.config.support_vision"
-                size="small"
-                color="blue"
-              >
-                {{ $t('SupportVision') }}
-              </a-tag>
-              <a-tag
-                v-if="item.config.is_vision"
-                size="small"
-                color="magenta"
-              >
-                {{ $t('SupportImageGenerate') }}
-              </a-tag>
+              </a-space>
+              <a-space :size="2">
+                <a-tag
+                  v-if="item.config.support_system_define"
+                  size="small"
+                  color="orange"
+                >
+                  {{ $t('SupportSystemDefine') }}
+                </a-tag>
+                <a-tag
+                  v-if="item.config.support_vision"
+                  size="small"
+                  color="blue"
+                >
+                  {{ $t('SupportVision') }}
+                </a-tag>
+                <a-tag
+                  v-if="item.config.is_vision"
+                  size="small"
+                  color="magenta"
+                >
+                  {{ $t('SupportImageGenerate') }}
+                </a-tag>
+              </a-space>
             </a-space>
           </a-option>
         </a-select>
@@ -823,5 +834,19 @@ defineExpose({reGenerate, promptForm});
 
 #chat-input-textarea {
   box-shadow: var(--shadow-special);
+}
+
+.model-select-model-detail-space :deep(.arco-avatar-image) {
+  line-height: 100%;
+}
+
+.model-select-model-detail-space > :deep(.arco-space-item) > div {
+  display: flex;
+  height: 20px;
+  width: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
 }
 </style>
