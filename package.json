@@ -47,7 +47,6 @@
         "aegis-web-sdk": "^1.37.9",
         "axios": "^1.5.0",
         "highlight.js": "^11.8.0",
-        "intro.js": "^8.0.0-beta.1",
         "moment": "^2.29.4",
         "prismjs": "^1.29.0",
         "vue": "^3.3.4",
