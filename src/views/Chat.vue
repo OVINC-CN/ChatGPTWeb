@@ -4,8 +4,15 @@ import ChatInput from '../components/ChatInput.vue';
 import {handleLoading} from '@/utils/loading';
 import MessageDisplay from '@/components/MessageDisplay.vue';
 import moment from 'moment';
-import {Role} from '@/constants';
+import {Role, SyncAction} from '@/constants';
 import {getLocalStorageSize, setLocalStorage} from '@/utils/local_storage';
+import {Encryption} from '@/utils/encrypt';
+import {getChatHistoryAPI, updateChatHistoryAPI} from '@/api/chat';
+import {Message} from '@arco-design/web-vue';
+import {useI18n} from 'vue-i18n';
+
+// i18n
+const i18n = useI18n();
 
 // message
 const oldLocalMessageKey = 'local-message';
@@ -46,13 +53,16 @@ const saveMessage = () => {
     setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
   }
 };
-const removeMessage = (messageKey) => {
+const removeMessage = (messageKey, deleteRemote) => {
   localStorage.removeItem(messageKey);
   delete localMessageStore.value[messageKey];
   setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
   if (currentMessageID.value === messageKey) {
     localMessages.value = [];
     localStorage.removeItem(currentMessageKey);
+  }
+  if (deleteRemote) {
+    updateChatHistoryAPI({message_id: messageKey, action: SyncAction.Delete, content: ''});
   }
 };
 const newMessage = () => {
@@ -132,6 +142,125 @@ const onHistoryOpen = () => {
   localStorageSize.value = getLocalStorageSize();
 };
 
+// history sync
+const historySync = ref(false);
+const historySyncKey = 'local-sync';
+const historySyncEncrypt = ref('');
+const historySyncEncryptObj = ref(null);
+const historySyncEncryptKey = 'local-sync-encrypt';
+const historySyncStartTime = ref(null);
+const historySyncStartTimeKey = 'local-sync-start-time';
+const historySyncConfigVisible = ref(false);
+const showHistorySyncConfig = () => {
+  historySyncConfigVisible.value = true;
+};
+const enableHistorySync = () => {
+  historySync.value = true;
+  localStorage.setItem(historySyncKey, JSON.stringify(historySync.value));
+  localStorage.setItem(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
+  historySyncConfigVisible.value = false;
+  historySyncEncryptObj.value = new Encryption(historySyncEncrypt.value);
+  doHistorySync();
+};
+const disableHistorySync = () => {
+  historySync.value = false;
+  localStorage.setItem(historySyncKey, JSON.stringify(historySync.value));
+  localStorage.setItem(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
+  historySyncConfigVisible.value = false;
+};
+const doHistorySync = async () => {
+  let syncFinished = true;
+  const syncTime = moment().unix();
+  const pageParams = {page: 1, size: 10};
+  let total = -1;
+  while (total < 0 || total > (pageParams.page - 1) * pageParams.size) {
+    try {
+      const res = await getChatHistoryAPI({
+        start_time: historySyncStartTime.value,
+        ...pageParams,
+      });
+      total = res.data.total;
+      for (const item of res.data.results) {
+        // update message
+        if (item.action === SyncAction.Update) {
+          const messages = historySyncEncryptObj.value.decrypt(item.content);
+          if (currentMessageID.value === item.message_id) {
+            if (!chatLoading.value) {
+              localMessages.value = messages;
+              localStorage.setItem(item.message_id, JSON.stringify(messages));
+            }
+          } else {
+            const createdAt = item.message_id.split('-')[2];
+            localMessageStore.value[item.message_id] = {'created_at': createdAt, 'title': messages[0].content};
+            localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
+            localStorage.setItem(item.message_id, JSON.stringify(messages));
+          }
+        }
+        // delete message
+        if (item.action === SyncAction.Delete) {
+          removeMessage(item.message_id, false);
+        }
+      }
+      pageParams.page++;
+    } catch (err) {
+      console.error(err);
+      if (err.message.includes('Decryption failed')) {
+        Message.error(i18n.t('DecryptMessageLogFailed'));
+      }
+      total = 0;
+      syncFinished = false;
+      break;
+    }
+  }
+  if (syncFinished) {
+    historySyncStartTime.value = syncTime;
+    localStorage.setItem(
+        historySyncStartTimeKey,
+        JSON.stringify(historySyncStartTime.value),
+    );
+  }
+  setTimeout(() => doHistorySync(), 1000 * 60 * 10);
+};
+onMounted(() => {
+  // load sync status
+  const syncEnabled = localStorage.getItem(historySyncKey);
+  if (syncEnabled) {
+    try {
+      historySync.value = JSON.parse(syncEnabled);
+    } catch (_) {}
+  }
+  // load sync encrypt
+  const syncEncrypt = localStorage.getItem(historySyncEncryptKey);
+  if (syncEncrypt) {
+    try {
+      historySyncEncrypt.value = JSON.parse(syncEncrypt);
+    } catch (_) {}
+  }
+  // load last sync time
+  const syncStartTime = localStorage.getItem(historySyncStartTimeKey);
+  if (syncStartTime) {
+    try {
+      historySyncStartTime.value = JSON.parse(syncStartTime);
+    } catch (_) {}
+  }
+  // start sync
+  if (historySync.value && historySyncEncrypt.value.length > 0) {
+    historySyncEncryptObj.value = new Encryption(historySyncEncrypt.value);
+    doHistorySync();
+  }
+});
+
+// websocket
+const onWebSocketClose = () => {
+  if (historySync.value && historySyncEncrypt.value.length > 0) {
+    updateChatHistoryAPI({
+      message_id: currentMessageID.value,
+      action: SyncAction.Update,
+      content: historySyncEncryptObj.value.encrypt(localMessages.value),
+    });
+  }
+};
+
 // loading
 const chatLoading = ref(false);
 const setChatLoading = (status) => handleLoading(chatLoading, status);
@@ -196,6 +325,7 @@ const setPromptForm = (data) => promptForm.value = data;
         @set-prompt-form="setPromptForm"
         @set-system-define="setSystemDefine"
         @show-history="showHistory"
+        @on-web-socket-close="onWebSocketClose"
       />
     </div>
     <a-modal
@@ -213,16 +343,27 @@ const setPromptForm = (data) => promptForm.value = data;
         direction="vertical"
         class="history-space"
       >
-        <a-button
-          @click="hideHistoryAndNewMessage"
-          :disabled="chatLoading"
-          style="width: 100%"
-        >
-          <template #icon>
-            <icon-plus :style="{ fontSize: '14px' }" />
-          </template>
-          {{ $t('StartNewChat') }}
-        </a-button>
+        <a-space class="history-space-button-box">
+          <a-button
+            @click="hideHistoryAndNewMessage"
+            :disabled="chatLoading"
+            style="width: 100%"
+          >
+            <template #icon>
+              <icon-plus :style="{ fontSize: '14px' }" />
+            </template>
+            {{ $t('StartNewChat') }}
+          </a-button>
+          <a-button
+            :type="historySync ? 'primary' : 'secondary'"
+            :status="historySync ? 'success' : 'normal'"
+            @click="showHistorySyncConfig"
+          >
+            <template #icon>
+              <icon-cloud />
+            </template>
+          </a-button>
+        </a-space>
         <a-list
           v-if="Object.keys(sortedMessageStore).length > 0"
           :max-height="320"
@@ -236,7 +377,7 @@ const setPromptForm = (data) => promptForm.value = data;
                 type="text"
                 size="mini"
                 style="color: unset"
-                @click="removeMessage(messageID)"
+                @click="removeMessage(messageID, true)"
                 :disabled="chatLoading"
               >
                 <template #icon>
@@ -267,6 +408,50 @@ const setPromptForm = (data) => promptForm.value = data;
         </div>
       </a-space>
     </a-modal>
+    <a-modal
+      v-model:visible="historySyncConfigVisible"
+      :esc-to-close="true"
+      :footer="false"
+    >
+      <template #title>
+        <div style="text-align: left; width: 100%">
+          {{ $t('SyncHistoryConfig') }}
+        </div>
+      </template>
+      <a-space
+        direction="vertical"
+        :size="10"
+      >
+        <div style="font-size: 14px; color: rgb(var(--orange-6))">
+          {{ $t('SyncHistoryTips') }}
+        </div>
+        <a-input
+          v-if="!historySync"
+          v-model="historySyncEncrypt"
+          :placeholder="$t('PleaseInputSyncEncrypt')"
+          :max-length="16"
+          show-word-limit
+        />
+        <a-space class="sync-history-config-button-box">
+          <a-button
+            v-if="!historySync"
+            status="success"
+            :disabled="historySync || !historySyncEncrypt"
+            @click="enableHistorySync"
+          >
+            {{ $t('EnableSync') }}
+          </a-button>
+          <a-button
+            v-else
+            status="warning"
+            :disabled="!historySync"
+            @click="disableHistorySync"
+          >
+            {{ $t('DisableSync') }}
+          </a-button>
+        </a-space>
+      </a-space>
+    </a-modal>
   </div>
 </template>
 
@@ -292,6 +477,17 @@ const setPromptForm = (data) => promptForm.value = data;
 
 .history-space,
 .history-space > :deep(.arco-space-item) {
+  width: 100%;
+}
+
+.history-space-button-box,
+.history-space-button-box > :deep(.arco-space-item):nth-child(1) {
+  width: 100%;
+}
+
+.sync-history-config-button-box,
+.sync-history-config-button-box > :deep(.arco-space-item),
+.sync-history-config-button-box > :deep(.arco-space-item) > button{
   width: 100%;
 }
 </style>

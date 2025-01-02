@@ -84,6 +84,13 @@ const mZhCN = {
   UploadImageButtonGuide: '对于支持视觉的大语言模型，可上传图片进行内容识别、分析或辅助回答',
   ChatMessageHistoryButtonGuide: '针对不同主题或问题，建议新建会话，以避免上下文（对话历史）干扰导致模型输出不准确',
   MaxMessagesCountButtonGuide: '单个会话的上下文消息数量限制。上下文是指模型在当前会话中记住的对话历史，可帮助模型更好地理解用户意图并生成更相关的回复，但同时会增加计算成本',
+  SyncHistoryConfig: '同步历史会话',
+  SyncHistoryTips: '历史会话将使用您配置的密钥加密后同步，若您遗忘加密密钥，将无法恢复任何历史记录，但不影响其他功能的使用；在新设备上启用同步时，需要使用相同的密钥',
+  EnableSync: '启用同步',
+  DisableSync: '停用同步',
+  PleaseInputSyncEncrypt: '请输入加密密钥',
+  SyncMessageFailed: '同步历史会话失败，请关注',
+  DecryptMessageLogFailed: '解密历史会话失败，请检查加密密钥',
 };
 
 export default mZhCN;

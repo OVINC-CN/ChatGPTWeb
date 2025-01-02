@@ -84,6 +84,13 @@ const mEnUS = {
   UploadImageButtonGuide: 'For multimodal models (text + vision), you can upload images for content recognition, analysis, or to assist in generating responses',
   ChatMessageHistoryButtonGuide: 'For different topics or questions, it is recommended to start a new session to avoid context (conversation history) interference that may lead to inaccurate outputs',
   MaxMessagesCountButtonGuide: 'The limit on the number of context messages in a single session. Context refers to the conversation history remembered by the model, which helps it better understand user intent and generate more relevant responses, but it also increases computational costs',
+  SyncHistoryConfig: 'Sync History',
+  SyncHistoryTips: 'Historical messages will be synchronized after encryption using your encrypt key. If you forget the encrypt key, you won’t be able to recover any history, but this won’t affect the use of other functions. When enabling synchronization on a new device, you need to use the same key.',
+  EnableSync: 'Enable',
+  DisableSync: 'Disable',
+  PleaseInputSyncEncrypt: 'Please input encrypt key',
+  SyncMessageFailed: 'Sync Message Failed',
+  DecryptMessageLogFailed: 'Failed to decrypt historical conversations. Please check your encrypt key.',
 };
 
 export default mEnUS;
