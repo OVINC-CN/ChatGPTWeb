@@ -205,7 +205,7 @@ if (useDarkTheme.value) {
   document.body.removeAttribute('arco-theme');
 }
 const changeTheme = (theme) => {
-  localStorage.setItem(themeKey, JSON.stringify(theme));
+  setLocalStorage(themeKey, JSON.stringify(theme));
   window.location.reload();
 };
 </script>

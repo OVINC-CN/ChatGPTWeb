@@ -156,16 +156,16 @@ const showHistorySyncConfig = () => {
 };
 const enableHistorySync = () => {
   historySync.value = true;
-  localStorage.setItem(historySyncKey, JSON.stringify(historySync.value));
-  localStorage.setItem(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
+  setLocalStorage(historySyncKey, JSON.stringify(historySync.value));
+  setLocalStorage(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
   historySyncConfigVisible.value = false;
   historySyncEncryptObj.value = new Encryption(historySyncEncrypt.value);
   doHistorySync();
 };
 const disableHistorySync = () => {
   historySync.value = false;
-  localStorage.setItem(historySyncKey, JSON.stringify(historySync.value));
-  localStorage.setItem(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
+  setLocalStorage(historySyncKey, JSON.stringify(historySync.value));
+  setLocalStorage(historySyncEncryptKey, JSON.stringify(historySyncEncrypt.value));
   historySyncConfigVisible.value = false;
 };
 const doHistorySync = async () => {
@@ -187,13 +187,13 @@ const doHistorySync = async () => {
           if (currentMessageID.value === item.message_id) {
             if (!chatLoading.value) {
               localMessages.value = messages;
-              localStorage.setItem(item.message_id, JSON.stringify(messages));
+              setLocalStorage(item.message_id, JSON.stringify(messages));
             }
           } else {
             const createdAt = item.message_id.split('-')[2];
             localMessageStore.value[item.message_id] = {'created_at': createdAt, 'title': messages[0].content};
-            localStorage.setItem(localMessageStoreKey, JSON.stringify(localMessageStore.value));
-            localStorage.setItem(item.message_id, JSON.stringify(messages));
+            setLocalStorage(localMessageStoreKey, JSON.stringify(localMessageStore.value));
+            setLocalStorage(item.message_id, JSON.stringify(messages));
           }
         }
         // delete message
@@ -214,7 +214,7 @@ const doHistorySync = async () => {
   }
   if (syncFinished) {
     historySyncStartTime.value = syncTime;
-    localStorage.setItem(
+    setLocalStorage(
         historySyncStartTimeKey,
         JSON.stringify(historySyncStartTime.value),
     );
