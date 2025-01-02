@@ -54,7 +54,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
     <div
       class="message-content-content"
       :style="{
-        background: message.role === Role.System ? 'rgb(var(--danger-4))' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--primary-5))',
+        background: message.role === Role.System ? 'rgb(var(--danger-4))' : message.role === Role.Assistant ? 'var(--color-fill-1)': 'rgb(var(--message-content-right))',
         color: message.role === Role.Assistant ? 'unset' : 'white',
         textAlign: 'left'
       }"
@@ -150,11 +150,24 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
   border-radius: var(--border-radius-medium);
 }
 
+.v-md-preview :deep(.github-markdown-body) pre code,
+.v-md-preview :deep(.github-markdown-body) pre tt {
+  color: unset;
+}
+
 .v-md-preview :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
   background: var(--color-fill-3);
   border-radius: var(--border-radius-medium);
   overflow: hidden;
   margin: 10px 0;
+}
+
+.v-md-preview :deep(.github-markdown-body) table tr {
+  background: var(--color-fill-1);
+}
+
+.v-md-preview :deep(.github-markdown-body) table tr:nth-child(2n) {
+  background: var(--color-fill-2);
 }
 
 .v-md-preview :deep(.github-markdown-body) blockquote {
@@ -190,7 +203,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 .v-md-preview-u :deep(.github-markdown-body) code,
 .v-md-preview-u :deep(.github-markdown-body) pre,
 .v-md-preview-u :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
-  background: rgb(var(--arcoblue-1));
+  background: rgb(var(--message-content-right-code));
 }
 
 .v-md-preview-u :deep(.github-markdown-body) code {
