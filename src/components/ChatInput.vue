@@ -43,6 +43,7 @@ const emits = defineEmits(
       'setPromptForm',
       'setSystemDefine',
       'showHistory',
+      'onWebSocketClose',
     ],
 );
 
@@ -216,6 +217,7 @@ const initWebSocket = () => {
   webSocket.value.onclose = () => {
     emits('setChatLoading', false);
     emits('toggleUserBehavior', false);
+    emits('onWebSocketClose');
   };
   return new Promise((resolve, reject) => {
     webSocket.value.onopen = (e) => {
