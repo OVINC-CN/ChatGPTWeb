@@ -355,8 +355,7 @@ const setPromptForm = (data) => promptForm.value = data;
             {{ $t('StartNewChat') }}
           </a-button>
           <a-button
-            :type="historySync ? 'primary' : 'secondary'"
-            :status="historySync ? 'success' : 'normal'"
+            :style="{backgroundColor: historySync ? 'rgb(var(--green-3))' : '', color: 'white'}"
             @click="showHistorySyncConfig"
           >
             <template #icon>
@@ -422,7 +421,7 @@ const setPromptForm = (data) => promptForm.value = data;
         direction="vertical"
         :size="10"
       >
-        <div style="font-size: 14px; color: rgb(var(--orange-6))">
+        <div style="font-size: 14px; color: rgb(var(--orange-4))">
           {{ $t('SyncHistoryTips') }}
         </div>
         <a-input
@@ -435,7 +434,6 @@ const setPromptForm = (data) => promptForm.value = data;
         <a-space class="sync-history-config-button-box">
           <a-button
             v-if="!historySync"
-            status="success"
             :disabled="historySync || !historySyncEncrypt"
             @click="enableHistorySync"
           >
@@ -443,7 +441,6 @@ const setPromptForm = (data) => promptForm.value = data;
           </a-button>
           <a-button
             v-else
-            status="warning"
             :disabled="!historySync"
             @click="disableHistorySync"
           >

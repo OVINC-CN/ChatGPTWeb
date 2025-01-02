@@ -4,7 +4,7 @@ body {
     --shadow2-center: 0 0 10px rgba(0, 0, 0, 0.1);
     --shadow3-center:0 0 20px rgba(0, 0, 0, 0.1);
     --message-content-right: var(--arcoblue-5);
-    --message-content-right-code: var(--arcoblue-1);
+    --message-content-right-code: rgb(var(--arcoblue-1));
 }
 body[arco-theme='dark'] {
     --shadow-special: 0 0 1px rgba(0, 0, 0, 0.3);
@@ -12,7 +12,7 @@ body[arco-theme='dark'] {
     --shadow2-center: 0 0 10px rgba(0, 0, 0, 0.1);
     --shadow3-center:0 0 20px rgba(0, 0, 0, 0.1);
     --message-content-right: var(--arcoblue-1);
-    --message-content-right-code: var(--arcoblue-2);
+    --message-content-right-code: var(--color-neutral-2);
 }
 
 html, body, #app {

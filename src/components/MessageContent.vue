@@ -150,11 +150,6 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
   border-radius: var(--border-radius-medium);
 }
 
-.v-md-preview :deep(.github-markdown-body) pre code,
-.v-md-preview :deep(.github-markdown-body) pre tt {
-  color: unset;
-}
-
 .v-md-preview :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
   background: var(--color-fill-3);
   border-radius: var(--border-radius-medium);
@@ -183,11 +178,6 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
   background-color: rgb(var(--orange-1));
 }
 
-.v-md-preview-u :deep(.github-markdown-body) a {
-  color: white;
-  text-decoration: underline;
-}
-
 .v-md-preview-u :deep(.github-markdown-body) h6 {
   color: unset;
 }
@@ -203,7 +193,7 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 .v-md-preview-u :deep(.github-markdown-body) code,
 .v-md-preview-u :deep(.github-markdown-body) pre,
 .v-md-preview-u :deep(.github-markdown-body) div[class*=v-md-pre-wrapper-] {
-  background: rgb(var(--message-content-right-code));
+  background: var(--message-content-right-code);
 }
 
 .v-md-preview-u :deep(.github-markdown-body) code {
@@ -220,5 +210,17 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 
 .message-content-content-icon-refresh:hover {
   color: var(--color-neutral-10);
+}
+
+.v-md-preview :deep(.github-markdown-body) .hljs-keyword,
+.v-md-preview :deep(.github-markdown-body) .github-markdown-body .hljs-selector-tag,
+.v-md-preview :deep(.github-markdown-body) .github-markdown-body .hljs-subst {
+  color: var(--color-text-2)
+}
+
+.v-md-preview :deep(.github-markdown-body) pre code,
+.v-md-preview :deep(.github-markdown-body) pre tt {
+  color: var(--color-text-1);
+  font-family: Fira Code;
 }
 </style>
