@@ -421,11 +421,17 @@ const setPromptForm = (data) => promptForm.value = data;
         direction="vertical"
         :size="10"
       >
-        <div style="font-size: 14px; color: rgb(var(--orange-4))">
-          {{ $t('SyncHistoryTips') }}
+        <div style="font-size: 14px; color: rgb(var(--orange-5))">
+          <div>{{ $t('SyncHistoryTips.title') }}</div>
+          <ul style="margin: 0 0 20px 0; padding: 0 0 0 20px">
+            <li>{{ $t('SyncHistoryTips.tip1') }}</li>
+            <li>{{ $t('SyncHistoryTips.tip2') }}</li>
+            <li>{{ $t('SyncHistoryTips.tip3') }}</li>
+            <li>{{ $t('SyncHistoryTips.tip4') }}</li>
+          </ul>
         </div>
         <a-input
-          v-if="!historySync"
+          :disabled="historySync"
           v-model="historySyncEncrypt"
           :placeholder="$t('PleaseInputSyncEncrypt')"
           :max-length="16"
