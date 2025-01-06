@@ -223,4 +223,9 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
   color: var(--color-text-1);
   font-family: Fira Code;
 }
+
+body[arco-theme="dark"] .v-md-preview :deep(.github-markdown-body) pre code,
+body[arco-theme="dark"] .v-md-preview :deep(.github-markdown-body) pre code span {
+  color: var(--color-text-1)!important;
+}
 </style>
