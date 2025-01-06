@@ -16,7 +16,7 @@
             @click="goTo('Chat')"
           >
             <img
-              height="32px"
+              height="24px"
               src="/logo.png"
               alt="logo"
             >
@@ -79,9 +79,6 @@
             </keep-alive>
           </router-view>
         </a-layout-content>
-        <a-layout-footer id="app-footer">
-          Copyright&nbsp;&copy;&nbsp;2022 - {{ currentYear }} OVINC-CN
-        </a-layout-footer>
       </a-layout>
     </a-spin>
     <user-info />
@@ -131,9 +128,6 @@ menu.value.forEach((item, index) => {
   if (index === 0) return;
   if (window.location.pathname.startsWith(item.path_match)) currentMenuItem.value = item.key;
 });
-
-// footer
-const currentYear = ref(new Date().getFullYear());
 
 // store
 const store = useStore();
@@ -238,7 +232,7 @@ const changeTheme = (theme) => {
 #app-header-right {
   display: flex;
   align-items: center;
-  padding: 14px 20px 14px 0;
+  padding: 10px 20px 10px 0;
 }
 
 #app-menu-logo {
@@ -268,17 +262,6 @@ const changeTheme = (theme) => {
 #app-menu-logo {
   padding: 14px 0 14px 20px;
   margin-right: 20px;
-}
-
-#app-footer {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  height: 48px;
-  border-top: 1px solid var(--color-border-1);
-  color: var(--color-text-1);
-  margin-top: 20px;
 }
 
 .user-info-wd-100 {

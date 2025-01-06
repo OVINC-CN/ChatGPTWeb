@@ -310,7 +310,7 @@ const setPromptForm = (data) => promptForm.value = data;
         @toggle-user-behavior="toggleUserBehavior"
         @re-generate="reGenerate"
       />
-      <a-divider />
+      <a-divider :margin="20" />
       <chat-input
         ref="chatInputRef"
         :user-behavior="userBehavior"
@@ -475,7 +475,7 @@ const setPromptForm = (data) => promptForm.value = data;
   width: 100%;
   display: flex;
   flex-direction: column;
-  max-height: calc(100 * var(--vh) - 160px);
+  max-height: calc(100 * var(--vh) - 72px);
 }
 
 .history-space,

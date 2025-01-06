@@ -790,7 +790,7 @@ defineExpose({reGenerate, promptForm});
 <style scoped>
 #chat-input {
   min-width: 100%;
-  padding: 0 20px;
+  padding: 0 20px 20px 20px;
   box-sizing: border-box;
 }
 
