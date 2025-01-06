@@ -110,12 +110,8 @@ const onImageClick = (url) => {
     style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center"
     v-show="localMessages.length === 0 && !systemDefine"
   >
-    <div style="width: 60px; height: 60px">
-      <img
-        alt="ChatGPT Logo"
-        src="/favicon.png"
-        style="max-width: 100%; max-height: 100%"
-      >
+    <div style="color: var(--color-text-3); font-size: 14px; margin-top: 20px">
+      Chat &copy; OVINC TECH&reg;
     </div>
   </div>
   <a-image-preview
