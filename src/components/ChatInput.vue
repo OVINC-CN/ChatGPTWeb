@@ -375,7 +375,7 @@ const doUploadFile = (file) => {
         (res) => {
           const credentials = res.data;
           const cos = loadCOSClient(credentials);
-          cos.uploadFile(
+          cos.putObject(
               {
                 Bucket: credentials.cos_bucket,
                 Region: credentials.cos_region,
