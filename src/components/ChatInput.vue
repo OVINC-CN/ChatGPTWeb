@@ -722,6 +722,7 @@ defineExpose({reGenerate, promptForm});
                     :size="18"
                     :image-url="item.icon || '/favicon.ico'"
                     object-fit="cover"
+                    shape="square"
                   />
                 </div>
                 {{ item.name }}
@@ -849,7 +850,10 @@ defineExpose({reGenerate, promptForm});
   width: 20px;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
+}
+
+.model-select-model-detail-space :deep(.arco-avatar) .arco-avatar-image {
+  border-radius: unset;
+  overflow: unset;
 }
 </style>
