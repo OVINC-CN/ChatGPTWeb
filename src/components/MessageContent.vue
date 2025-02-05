@@ -91,6 +91,13 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
         </a-link>
       </div>
       <v-md-preview
+        v-show="message.thinking"
+        :text="':::tip ' + $t('ReasoningContent') + '\n' + message.thinking + '\n:::'"
+        class="v-md-preview"
+        :class="{'v-md-preview-u': message.role === Role.User || message.role === Role.System}"
+        @image-click="onImageClick"
+      />
+      <v-md-preview
         v-show="message.content"
         :text="message.content"
         class="v-md-preview"
@@ -227,5 +234,9 @@ const onImageClick = (images, index) => emits('onImageClick', images[index]);
 body[arco-theme="dark"] .v-md-preview :deep(.github-markdown-body) pre code,
 body[arco-theme="dark"] .v-md-preview :deep(.github-markdown-body) pre code span {
   color: var(--color-text-1)!important;
+}
+
+body[arco-theme="dark"] .v-md-preview :deep(.v-md-plugin-tip.tip) {
+  background-color: var(--color-bg-5);
 }
 </style>

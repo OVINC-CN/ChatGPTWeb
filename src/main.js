@@ -19,6 +19,8 @@ import createEmojiPlugin from '@kangc/v-md-editor/lib/plugins/emoji/index';
 import '@kangc/v-md-editor/lib/plugins/emoji/emoji.css';
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
+import tipsPlugin from '@kangc/v-md-editor/lib/plugins/tip/index';
+import '@kangc/v-md-editor/lib/plugins/tip/tip.css';
 
 import hljs from 'highlight.js';
 
@@ -29,6 +31,7 @@ VMdPreview.use(createKatexPlugin());
 VMdPreview.use(createTipPlugin());
 VMdPreview.use(createEmojiPlugin());
 VMdPreview.use(createCopyCodePlugin());
+VMdPreview.use(tipsPlugin());
 
 const app = createApp(App);
 
