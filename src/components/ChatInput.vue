@@ -174,7 +174,7 @@ const doChat = async () => {
   // auto scroll
   emits('toggleUserBehavior', false);
   // init response content
-  lastResponseContent.value = {role: Role.Assistant, content: ''};
+  lastResponseContent.value = {role: Role.Assistant, content: '', thinking: ''};
   emits('addMessage', lastResponseContent.value);
   // clear input
   promptForm.value.content = '';
@@ -190,6 +190,10 @@ const onMessage = (event) => {
   }
   if (data.data) {
     lastResponseContent.value.content += data.data;
+    emits('saveMessage');
+  }
+  if (data.thinking) {
+    lastResponseContent.value.thinking += data.thinking;
     emits('saveMessage');
   }
 };

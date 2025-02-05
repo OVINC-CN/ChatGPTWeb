@@ -97,6 +97,7 @@ const mZhCN = {
   PleaseInputSyncEncrypt: '请输入加密密钥',
   SyncMessageFailed: '同步历史会话失败，请关注',
   DecryptMessageLogFailed: '解密历史会话失败，请检查加密密钥',
+  ReasoningContent: '思考过程',
 };
 
 export default mZhCN;

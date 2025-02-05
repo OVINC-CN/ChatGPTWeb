@@ -97,6 +97,7 @@ const mEnUS = {
   PleaseInputSyncEncrypt: 'Please input encrypt key',
   SyncMessageFailed: 'Sync Message Failed',
   DecryptMessageLogFailed: 'Failed to decrypt historical conversations. Please check your encrypt key.',
+  ReasoningContent: 'Reasoning Content',
 };
 
 export default mEnUS;
