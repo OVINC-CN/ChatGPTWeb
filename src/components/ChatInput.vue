@@ -746,13 +746,6 @@ defineExpose({reGenerate, promptForm});
                 >
                   {{ $t('SupportVision') }}
                 </a-tag>
-                <a-tag
-                  v-if="item.config.is_vision"
-                  size="small"
-                  color="magenta"
-                >
-                  {{ $t('SupportImageGenerate') }}
-                </a-tag>
               </a-space>
             </a-space>
           </a-option>
