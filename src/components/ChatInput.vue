@@ -30,6 +30,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  historySync: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // emits
@@ -551,6 +555,7 @@ defineExpose({reGenerate, promptForm});
               @click="showHistory"
               class="chat-input-left-button"
               id="history-message-button"
+              :style="{backgroundColor: historySync ? 'rgb(var(--green-3))' : '', color: historySync ? 'white': ''}"
             >
               <icon-history />
             </a-button>
