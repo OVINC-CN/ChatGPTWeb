@@ -325,6 +325,7 @@ const setPromptForm = (data) => promptForm.value = data;
         :local-messages="localMessages"
         :chat-loading="chatLoading"
         :system-define="systemDefine"
+        :history-sync="historySync"
         @add-message="addMessage"
         @set-chat-loading="setChatLoading"
         @save-message="saveMessage"
@@ -363,7 +364,7 @@ const setPromptForm = (data) => promptForm.value = data;
             {{ $t('StartNewChat') }}
           </a-button>
           <a-button
-            :style="{backgroundColor: historySync ? 'rgb(var(--green-3))' : '', color: 'white'}"
+            :style="{backgroundColor: historySync ? 'rgb(var(--green-3))' : '', color: historySync ? 'white': ''}"
             @click="showHistorySyncConfig"
           >
             <template #icon>
