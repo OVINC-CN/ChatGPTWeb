@@ -376,6 +376,7 @@ const setPromptForm = (data) => promptForm.value = data;
           class="history-search-input"
           v-model="historySearchKey"
           :placeholder="$t('PleaseInputHistoryKeyword')"
+          allow-clear
         />
         <a-list
           v-if="Object.keys(sortedMessageStore).length > 0"
