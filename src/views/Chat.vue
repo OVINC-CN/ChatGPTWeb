@@ -15,6 +15,7 @@ import {useI18n} from 'vue-i18n';
 const i18n = useI18n();
 
 // message
+const historySearchKey = ref('');
 const oldLocalMessageKey = 'local-message';
 const localMessages = ref([]);
 const currentMessageID = ref('');
@@ -23,15 +24,22 @@ const messageIDPrefix = 'local-message-';
 const localMessageStore = ref({});
 const localMessageStoreKey = 'local-message-store';
 const sortedMessageStore = computed(() => {
-  return Object.entries(localMessageStore.value)
+  const filteredEntries = Object.entries(localMessageStore.value)
       .sort(([, a], [, b]) => b.created_at - a.created_at)
-      .reduce(
-          (acc, [key, value]) => {
-            acc[key] = value;
-            return acc;
-          },
-          {},
-      );
+      .filter(([, value]) => {
+        const content = localStorage.getItem(`${messageIDPrefix}${value.created_at}`);
+        if (!content) {
+          return false;
+        }
+        return content.includes(historySearchKey.value);
+      });
+  return filteredEntries.reduce(
+      (acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      },
+      {},
+  );
 });
 const addMessage = (message) => {
   localMessages.value.push(message);
@@ -363,6 +371,11 @@ const setPromptForm = (data) => promptForm.value = data;
             </template>
           </a-button>
         </a-space>
+        <a-input
+          class="history-search-input"
+          v-model="historySearchKey"
+          :placeholder="$t('PleaseInputHistoryKeyword')"
+        />
         <a-list
           v-if="Object.keys(sortedMessageStore).length > 0"
           :max-height="320"
@@ -492,5 +505,13 @@ const setPromptForm = (data) => promptForm.value = data;
 .sync-history-config-button-box > :deep(.arco-space-item),
 .sync-history-config-button-box > :deep(.arco-space-item) > button{
   width: 100%;
+}
+
+.history-search-input {
+  border-radius: var(--border-radius-large);
+}
+
+.history-search-input :deep(.arco-input) {
+  text-align: center;
 }
 </style>

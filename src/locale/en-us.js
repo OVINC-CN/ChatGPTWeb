@@ -98,6 +98,7 @@ const mEnUS = {
   SyncMessageFailed: 'Sync Message Failed',
   DecryptMessageLogFailed: 'Failed to decrypt historical conversations. Please check your encrypt key.',
   ReasoningContent: 'Reasoning Content',
+  PleaseInputHistoryKeyword: 'Search Keyword',
 };
 
 export default mEnUS;
